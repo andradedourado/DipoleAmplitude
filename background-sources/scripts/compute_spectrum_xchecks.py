@@ -137,7 +137,7 @@ def write_spectrum_xchecks(Zs, has_magnetic_field):
     for idist in range(len(dist_arr) - 1): 
         spec.append(compute_spectrum_xchecks(Zs, dist_arr[idist], dist_arr[idist + 1], has_magnetic_field))
     
-    np.savetxt(f"{RESULTS_DIR}/spec_xchecks_{PARTICLES[iZs(Zs)]}_{get_EGMF_label(has_magnetic_field)}.dat", np.column_stack((ES, np.array(spec).T)), fmt = "%.15e")
+    np.savetxt(f"{RESULTS_DIR}/spec_xchecks_{PARTICLES[iZs(Zs)]}_{get_EGMF_label(has_magnetic_field)}.dat", np.column_stack((ES * 1e18, np.array(spec).T / (ES[:, np.newaxis] * 1e18))), fmt = "%.15e")
 
 # ----------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
