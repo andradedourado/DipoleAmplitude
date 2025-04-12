@@ -60,14 +60,14 @@ def plot_spectrum_xchecks(Zs, has_magnetic_field):
     for idist in range(1, data.shape[1]):
         spec += data[:, idist]
     
-    plt.plot(np.log10(data[:, 0] * 1e18), spec * data[:, 0], color = 'k')
+    plt.plot(np.log10(data[:, 0]), spec * data[:, 0]**2, color = 'k')
 
     for idist in range(data.shape[1] - 1):
-        plt.plot(np.log10(data[:, 0] * 1e18), data[:, idist + 1] * data[:, 0], color = get_color(Zs, idist))
+        plt.plot(np.log10(data[:, 0]), data[:, idist + 1] * data[:, 0]**2, color = get_color(Zs, idist))
 
     plt.yscale('log')
     plt.xlim([18, 21])
-    plt.ylim([1e-16, 1e-10])
+    plt.ylim([1e0, 1e8])
     plt.xlabel(r'$\log_{10}(\rm Energy / eV)$')
     plt.ylabel(r'$E^2 \times {\rm Intensity} \: \rm [arb. units]$')
     plt.legend([r'${\rm All}$', r'$[1, 3] \: \rm Mpc$', r'$[3, 9] \: \rm Mpc$', r'$[9, 27] \: \rm Mpc$', r'$[27, 81] \: \rm Mpc$', r'$[81, 243] \: \rm Mpc$', r'$[243, 729] \: \rm Mpc$'])
