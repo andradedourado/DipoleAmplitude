@@ -67,9 +67,9 @@ def get_galaxy_set(galaxy_type):
     elif galaxy_type == 'SBG':
         return ['NGC253', 'M82', 'NGC4945', 'M83', 'IC342', 'NGC6946', 'NGC2903', 'NGC5055', 'NGC3628', 'NGC3627', \
             'NGC4631', 'NGC891', 'NGC3556', 'NGC660', 'NGC2146', 'NGC3079', 'NGC1068', 'NGC1365']
-    
+
 # ----------------------------------------------------------------------------------------------------
-def compute_dipole_amplitude(galaxy_type, L):
+def compute_S0_Sx_Sy_Sz(galaxy_type, L):
 
     S0, Sx, Sy, Sz = (np.zeros_like(ENERGY_BIN_CENETRS) for _ in range(4))
 
@@ -84,13 +84,19 @@ def compute_dipole_amplitude(galaxy_type, L):
                 Sy += np.histogram(data[:,2], bins = ENERGY_EDGES, weights = data[:,7] * weights)[0]
                 Sz += np.histogram(data[:,2], bins = ENERGY_EDGES, weights = data[:,8] * weights)[0]
 
-    np.savetxt(f"{RESULTS_DIR}/dlt_{galaxy_type}_{L}.dat", np.column_stack((ENERGY_BIN_CENETRS * 1e18, 3 * np.sqrt(Sx**2 + Sy**2 + Sz**2) / S0)), fmt = "%.15e")
+    return S0, Sx, Sy, Sz
+
+# ----------------------------------------------------------------------------------------------------
+def compute_dipole_amplitude_full_sky_coverage(galaxy_type, L):
+
+    S0, Sx, Sy, Sz = compute_S0_Sx_Sy_Sz(galaxy_type, L)
+    np.savetxt(f"{RESULTS_DIR}/dlt_full_sky_{galaxy_type}_{L}.dat", np.column_stack((ENERGY_BIN_CENETRS * 1e18, 3 * np.sqrt(Sx**2 + Sy**2 + Sz**2) / S0)), fmt = "%.15e")
 
 # ----------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
     for galaxy_type in ['AGN', 'AGN+SBG', 'SBG']:
         for L in ['L11', 'Lradio', 'Lgamma']:
-            compute_dipole_amplitude(galaxy_type, L)
+            compute_dipole_amplitude_full_sky_coverage(galaxy_type, L)
 
 # ----------------------------------------------------------------------------------------------------
