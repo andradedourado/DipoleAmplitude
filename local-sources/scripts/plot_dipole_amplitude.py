@@ -42,7 +42,7 @@ def format_luminosity_label(L):
 def plot_dipole_amplitude(L):
 
     for galaxy_type in ['AGN', 'AGN+SBG', 'SBG']:
-        data = np.loadtxt(f"{RESULTS_DIR}/dlt_full_sky_{galaxy_type}_{L}.dat")
+        data = np.loadtxt(f"{RESULTS_DIR}/dipole_amplitude_full_sky_{galaxy_type}_{L}.dat")
         plt.plot(np.log10(data[:,0]), data[:,1], c = get_galaxy_color(galaxy_type))
 
     plt.gca().add_artist(AnchoredText(f'{format_luminosity_label(L)}', loc = 'upper left', frameon = False, prop = {'fontsize': 'x-large'}))
@@ -53,8 +53,8 @@ def plot_dipole_amplitude(L):
     plt.xlabel(r'$\log_{10}(\rm Energy/ eV)$')
     plt.ylabel('Dipole amplitude')
     plt.legend(['AGN', 'AGN + SBG', 'SBG'], loc = 'lower right')
-    plt.savefig(f"{FIGURES_DIR}/dlt_full_sky_{L}.pdf", bbox_inches = 'tight')
-    plt.savefig(f"{FIGURES_DIR}/dlt_full_sky_{L}.png", bbox_inches = 'tight', dpi = 300)
+    plt.savefig(f"{FIGURES_DIR}/dipole_amplitude_full_sky_{L}.pdf", bbox_inches = 'tight')
+    plt.savefig(f"{FIGURES_DIR}/dipole_amplitude_full_sky_{L}.png", bbox_inches = 'tight', dpi = 300)
     plt.show()
 
 # ----------------------------------------------------------------------------------------------------
