@@ -53,7 +53,7 @@ def get_color(Zs, idist):
 # ----------------------------------------------------------------------------------------------------
 def plot_spectrum_xchecks(Zs, has_magnetic_field):
 
-    data = np.loadtxt(f"{RESULTS_DIR}/spec_xchecks_{PARTICLES[iZs(Zs)]}_{get_EGMF_label(has_magnetic_field)}.dat")
+    data = np.loadtxt(f"{RESULTS_DIR}/spec_{PARTICLES[iZs(Zs)]}_{get_EGMF_label(has_magnetic_field)}.dat")
     
     spec = np.zeros(data.shape[0])
     
@@ -71,8 +71,8 @@ def plot_spectrum_xchecks(Zs, has_magnetic_field):
     plt.xlabel(r'$\log_{10}(\rm Energy / eV)$')
     plt.ylabel(r'$E^2 \times {\rm Intensity} \: \rm [arb. units]$')
     plt.legend([r'${\rm All}$', r'$[1, 3] \: \rm Mpc$', r'$[3, 9] \: \rm Mpc$', r'$[9, 27] \: \rm Mpc$', r'$[27, 81] \: \rm Mpc$', r'$[81, 243] \: \rm Mpc$', r'$[243, 729] \: \rm Mpc$'])
-    plt.savefig(f"{FIGURES_DIR}/spectrum_xchecks_{PARTICLES[iZs(Zs)]}_{get_EGMF_label(has_magnetic_field)}.pdf", bbox_inches = 'tight')
-    plt.savefig(f"{FIGURES_DIR}/spectrum_xchecks_{PARTICLES[iZs(Zs)]}_{get_EGMF_label(has_magnetic_field)}.png", bbox_inches = 'tight', dpi = 300)
+    plt.savefig(f"{FIGURES_DIR}/spec_{PARTICLES[iZs(Zs)]}_{get_EGMF_label(has_magnetic_field)}.pdf", bbox_inches = 'tight')
+    plt.savefig(f"{FIGURES_DIR}/spec_{PARTICLES[iZs(Zs)]}_{get_EGMF_label(has_magnetic_field)}.png", bbox_inches = 'tight', dpi = 300)
     plt.show()
 
 # ----------------------------------------------------------------------------------------------------
