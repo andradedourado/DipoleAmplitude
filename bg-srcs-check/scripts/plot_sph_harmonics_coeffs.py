@@ -32,6 +32,8 @@ def plot_sph_harmonics_coeffs():
     x = np.logspace(-3, 3, 100)
     plt.plot(x, x, c = 'gray', ls = ':')
     plt.axhline(y = 3, c = 'gray', ls = ':')
+    plt.text(2e2, 3.25, r'$\delta = 3$', rotation = 0, fontsize = 12, color = 'gray')
+    plt.text(4e-3, 6e-3, r'$\delta = \lambda_{\rm scatt}/r_s$', rotation = 52, fontsize = 12, color = 'gray', ha = 'center', va = 'center', rotation_mode = 'anchor')
 
     for rs in [27, 243]:
         data = np.loadtxt(f"{RESULTS_DIR}/sph_harmonics_coeffs_1_{rs}Mpc.dat")
