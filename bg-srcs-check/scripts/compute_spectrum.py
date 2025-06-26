@@ -3,10 +3,10 @@ from scipy.special import erf
 from scipy.special import k1
 import numpy as np 
 
-with open("base_dir.txt", "r") as f:
-    BASE_DIR = f.read().strip()
-
+# with open("base_dir.txt", "r") as f:
+#     BASE_DIR = f.read().strip()
 RESULTS_DIR = "../results"
+SIMULATIONS_DIR = "../../simulations/background-sources/results/binning"
 
 CTSS = np.logspace(0, 3.5, num = 71)
 ESS = np.delete(np.logspace(0, 4, num = 81), 0)
@@ -112,7 +112,7 @@ def compute_spectrum_xchecks(Zs, Dmin, Dmax, has_magnetic_field):
     for icts, cts in enumerate(CTSS):
         for iEs, Es in enumerate(ESS):
 
-            data = np.loadtxt(f"{BASE_DIR}/{PARTICLES[iZs(Zs)]}/S_ID{iZs(Zs):02d}D{icts:02d}E0{iEs:02d}.dat")
+            data = np.loadtxt(f"{SIMULATIONS_DIR}/{PARTICLES[iZs(Zs)]}/S_ID{iZs(Zs):02d}D{icts:02d}E0{iEs:02d}.dat")
 
             spec += data * w_mag(Es, cts, Zs, Dmin, Dmax, has_magnetic_field) * w_sim(Es, cts) * w_spec(Es, Zs)
 
