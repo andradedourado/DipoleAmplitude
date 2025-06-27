@@ -1,4 +1,5 @@
 from matplotlib.pylab import cm
+from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -10,10 +11,12 @@ plt.rcParams.update({'legend.fontsize': 'medium',
 'ytick.labelsize': 'x-large'})
 
 FIGURES_DIR = "../figures"
+REFERENCES_DIR = "../references"
 RESULTS_DIR = "../results"
 
 PARTICLES = ['1H', '4He', '14N', '28Si', '56Fe']
 ZSS = [1, 2, 7, 14, 26]
+DS = [1, 3, 9, 27, 81, 243, 729] # Mpc
 
 # ----------------------------------------------------------------------------------------------------
 def iZs(Zs):
@@ -56,18 +59,25 @@ def plot_spectrum_xchecks(Zs, has_magnetic_field):
     data = np.loadtxt(f"{RESULTS_DIR}/spec_{PARTICLES[iZs(Zs)]}_{get_EGMF_label(has_magnetic_field)}.dat")
     
     spec = np.zeros(data.shape[0])
-    
     for idist in range(1, data.shape[1]):
         spec += data[:, idist]
-    
-    plt.plot(np.log10(data[:, 0]), spec * data[:, 0]**2, color = 'k')
+    plt.plot(np.log10(data[:, 0]), spec * data[:, 0]**2, c = 'k')
 
-    for idist in range(data.shape[1] - 1):
-        plt.plot(np.log10(data[:, 0]), data[:, idist + 1] * data[:, 0]**2, color = get_color(Zs, idist))
+    if has_magnetic_field == True and (Zs == 1 or Zs == 26):
+        Lang2020_data = np.loadtxt(f"{REFERENCES_DIR}/Lang2020_spec_{PARTICLES[iZs(Zs)]}_EMGF_Total.dat")
+        interp_spec = interp1d(10**Lang2020_data[:,0], Lang2020_data[:,1], bounds_error = False, fill_value = np.nan)
+        plt.plot(Lang2020_data[:,0], Lang2020_data[:,1] * spec[1] * data[1,0]**2 / interp_spec(data[1,0]), c = 'k', ls = '--', label = '_nolegend_')
 
+    for idist in range(data.shape[1] - 2):
+        plt.plot(np.log10(data[:, 0]), data[:, idist + 1] * data[:, 0]**2, c = get_color(Zs, idist))
+        if has_magnetic_field == True and (Zs == 1 or Zs == 26):
+            Lang2020_data = np.loadtxt(f"{REFERENCES_DIR}/Lang2020_spec_{PARTICLES[iZs(Zs)]}_EMGF_{DS[idist]}Mpc_{DS[idist+1]}Mpc.dat")
+            interp_spec = interp1d(10**Lang2020_data[:,0], Lang2020_data[:,1], bounds_error = False, fill_value = np.nan)
+            plt.plot(Lang2020_data[:,0], Lang2020_data[:,1] * data[1, idist + 1] * data[1,0]**2 / interp_spec(data[1,0]), c = get_color(Zs, idist), ls = '--', label = '_nolegend_')
+            
     plt.yscale('log')
     plt.xlim([18, 21])
-    plt.ylim([1e0, 1e8])
+    plt.ylim([1e0, 1e9])
     plt.xlabel(r'$\log_{10}(\rm Energy / eV)$')
     plt.ylabel(r'$E^2 \times {\rm Intensity} \: \rm [arb. units]$')
     plt.legend([r'${\rm All}$', r'$[1, 3] \: \rm Mpc$', r'$[3, 9] \: \rm Mpc$', r'$[9, 27] \: \rm Mpc$', r'$[27, 81] \: \rm Mpc$', r'$[81, 243] \: \rm Mpc$', r'$[243, 729] \: \rm Mpc$'])
