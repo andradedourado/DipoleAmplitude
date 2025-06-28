@@ -54,7 +54,7 @@ def get_color(Zs, idist):
         return cm.BuPu(np.linspace(0, 1, 10)[8 - idist])
 
 # ----------------------------------------------------------------------------------------------------
-def plot_spectrum_xchecks(Zs, has_magnetic_field):
+def plot_spectrum(Zs, has_magnetic_field):
 
     data = np.loadtxt(f"{RESULTS_DIR}/spec_{PARTICLES[iZs(Zs)]}_{get_EGMF_label(has_magnetic_field)}.dat")
     
@@ -89,7 +89,7 @@ def plot_spectrum_xchecks(Zs, has_magnetic_field):
 if __name__ == '__main__':
 
     for Zs in ZSS:
-        plot_spectrum_xchecks(Zs, False)
-        plot_spectrum_xchecks(Zs, True)
+        plot_spectrum(Zs, False)
+        plot_spectrum(Zs, True)
 
 # ----------------------------------------------------------------------------------------------------
