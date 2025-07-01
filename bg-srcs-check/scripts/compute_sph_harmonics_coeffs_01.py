@@ -4,6 +4,8 @@ import numpy as np
 
 RESULTS_DIR = "../results"
 
+# Figure 3
+
 # ----------------------------------------------------------------------------------------------------
 def integrand_sph_harmonics_coeffs(l, rs, ilbd_scatt):
 
