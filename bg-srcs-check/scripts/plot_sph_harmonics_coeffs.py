@@ -35,7 +35,7 @@ def plot_sph_harmonics_coeffs():
     plt.text(2e2, 3.25, r'$\delta = 3$', rotation = 0, fontsize = 12, color = 'gray')
     plt.text(4e-3, 6e-3, r'$\delta = \lambda_{\rm scatt}/r_s$', rotation = 52, fontsize = 12, color = 'gray', ha = 'center', va = 'center', rotation_mode = 'anchor')
 
-    for rs in [27, 243]:
+    for rs in [3, 27, 243]:
         data = np.loadtxt(f"{RESULTS_DIR}/sph_harmonics_coeffs_1_{rs}Mpc.dat")
         Lang2021_data = np.loadtxt(f"{REFERENCES_DIR}/Lang2021_dlt_lbd_scatt_over_rs_{rs}Mpc.dat")
         plt.plot(data[:,0], data[:,1], c = select_color_for_rs(rs))

@@ -10,12 +10,12 @@ ct_Hub = 10**3.5 # Mpc
 # ----------------------------------------------------------------------------------------------------
 def d3N_dr3_Juttner(cts, lbd_scatt, r):
 
-    if r <= cts:
+    if r < cts:
         alp = 3 * cts / lbd_scatt
         return r**2 * alp * np.exp(-alp / np.sqrt(1 - (r / cts)**2)) / (cts**3 * k1(alp) * (1 - (r / cts)**2)**2) / (4 * np.pi * r**2)
 
-    elif r > cts:
-        return 0
+    elif r >= cts:
+        return 0.
 
 # ----------------------------------------------------------------------------------------------------
 def d3N_dr3_diff(cts, lbd_scatt, r):
@@ -26,7 +26,7 @@ def d3N_dr3_diff(cts, lbd_scatt, r):
         return A * r**2 * np.exp(-r**2 / (2 * sgm**2)) / (4 * np.pi * r**2)
 
     elif r > cts:
-        return 0
+        return 0.
 
 # ----------------------------------------------------------------------------------------------------
 def n(lbd_scatt, r): # Equation (3)
@@ -40,9 +40,17 @@ def n(lbd_scatt, r): # Equation (3)
 # ----------------------------------------------------------------------------------------------------
 def integrand_d2N_dAdt_diff(l, cos_theta, lbd_scatt, rs):
 
-    r = np.sqrt(l**2 + rs**2 - 2 * l * rs * cos_theta)
+    if np.isclose(cos_theta, 1) == True:
+        r = abs(rs - l)
+    if np.isclose(cos_theta, -1) == True:
+        r = rs + l
+    else:
+        r = np.sqrt(l**2 + rs**2 - 2 * l * rs * cos_theta)
 
-    return np.exp(- l / lbd_scatt) * n(lbd_scatt, r) / lbd_scatt
+    if np.isclose(r, 0) == True: # To prevent numerical issues
+        return 0
+    else:
+        return np.exp(- l / lbd_scatt) * n(lbd_scatt, r) / lbd_scatt
 
 # ----------------------------------------------------------------------------------------------------
 def d2N_dAdt_diff(cos_theta, lbd_scatt, rs): # Equation (2)
@@ -58,7 +66,7 @@ def d2N_dAdt_bal(lbd_scatt, rs): # Equation (5)
 def compute_angular_distribution(cos_theta, lbd_scatt, rs): # Equation (6) 
 
     if np.isclose(cos_theta, 1) == True:
-        return d2N_dAdt_bal(lbd_scatt, rs) + d2N_dAdt_diff(cos_theta, lbd_scatt, rs)
+        return d2N_dAdt_bal(lbd_scatt, rs) + d2N_dAdt_diff(cos_theta, lbd_scatt, rs) 
     
     else: 
         return d2N_dAdt_diff(cos_theta, lbd_scatt, rs)
@@ -66,7 +74,8 @@ def compute_angular_distribution(cos_theta, lbd_scatt, rs): # Equation (6)
 # ----------------------------------------------------------------------------------------------------
 def write_angular_distribution(lbd_scatt, rs, ilbd_scatt):
 
-    cos_theta = np.cos(np.linspace(np.pi, 0, num = 100))
+    # cos_theta = np.cos(np.linspace(np.pi, 0, num = 100))
+    cos_theta = np.concatenate([np.linspace(-1, 0.95, num = 100), np.linspace(0.95, 1, num = 100)[1:]])
     dN_dcos_theta = np.zeros_like(cos_theta)
 
     for i in range(len(cos_theta)):
@@ -79,17 +88,17 @@ def write_angular_distribution(lbd_scatt, rs, ilbd_scatt):
         np.savetxt(f"{RESULTS_DIR}/angular_distr_{lbd_scatt_over_rs_str}_{rs}Mpc.dat", np.column_stack((cos_theta, dN_dcos_theta)), fmt = "%.15e")
 
     else:
-        np.savetxt(f"{RESULTS_DIR}/angular_distr_{ilbd_scatt:02d}_{rs}Mpc.dat", np.column_stack((cos_theta, dN_dcos_theta)), fmt = "%.15e")
+        np.savetxt(f"{RESULTS_DIR}/Figure3/angular_distr_{ilbd_scatt:02d}_{rs}Mpc.dat", np.column_stack((cos_theta, dN_dcos_theta)), fmt = "%.15e")
 
 # ----------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
-    # rs = 27 # Mpc 
-    # for lbd_scatt_over_rs in [0.01, 0.03, 0.1, 0.3, 1, 3]: 
-    #     write_angular_distribution(lbd_scatt_over_rs * rs, rs, -1)
+    rs = 27 # Mpc 
+    for lbd_scatt_over_rs in [0.01, 0.03, 0.1, 0.3, 1, 3]: 
+        write_angular_distribution(lbd_scatt_over_rs * rs, rs, -1)
 
-    for rs in [3, 27, 243]:
-        for ilbd_scatt, lbd_scatt_over_rs in enumerate(np.logspace(-3, 3, num = 100)):
-            write_angular_distribution(lbd_scatt_over_rs * rs, rs, ilbd_scatt)
+    # for rs in [3, 27, 243]:
+    #     for ilbd_scatt, lbd_scatt_over_rs in enumerate(np.logspace(-3, 3, num = 100)):
+    #         write_angular_distribution(lbd_scatt_over_rs * rs, rs, ilbd_scatt)
 
 # ----------------------------------------------------------------------------------------------------
