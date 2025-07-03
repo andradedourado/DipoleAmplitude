@@ -15,9 +15,7 @@ PARTICLES = ['1H', '4He', '14N', '28Si', '56Fe']
 ZSS = [1, 2, 7, 14, 26]
 
 Gmm = 2
-Rcut = 1e21 # V
 
-B = 3 # nG 
 lbd_coh = 1 # Mpc
 
 # ----------------------------------------------------------------------------------------------------
@@ -29,14 +27,14 @@ def iZs(Zs):
         raise ValueError(f"Zs ({Zs}) not found in ZSS.")
 
 # ----------------------------------------------------------------------------------------------------
-def larmor_radius(Es, Zs): # E in EeV and B in nG 
+def larmor_radius(Es, Zs, B): # E in EeV and B in nG 
 
     return 1.081 / Zs * Es / B # Mpc
 
 # ----------------------------------------------------------------------------------------------------
-def scattering_length(Es, Zs):
+def scattering_length(Es, Zs, B):
 
-    RL = larmor_radius(Es, Zs)
+    RL = larmor_radius(Es, Zs, B)
 
     if RL < lbd_coh:
         return (RL/lbd_coh)**(1/3) * lbd_coh # Mpc
@@ -45,9 +43,9 @@ def scattering_length(Es, Zs):
         return (RL/lbd_coh)**2 * lbd_coh # Mpc
     
 # ----------------------------------------------------------------------------------------------------
-def diffusive_distr(r, Es, cts, Zs):
+def diffusive_distr(r, Es, cts, Zs, B):
 
-    lbd_scatt = scattering_length(Es, Zs) 
+    lbd_scatt = scattering_length(Es, Zs, B) 
 
     if r <= cts:
         sgm = np.sqrt(lbd_scatt * cts / 3)
@@ -58,9 +56,9 @@ def diffusive_distr(r, Es, cts, Zs):
         return 0
 
 # ----------------------------------------------------------------------------------------------------
-def transition_distr(r, Es, cts, Zs):
+def transition_distr(r, Es, cts, Zs, B):
 
-    lbd_scatt = scattering_length(Es, Zs) 
+    lbd_scatt = scattering_length(Es, Zs, B) 
 
     if r <= cts:
         alp = 3 * cts / lbd_scatt
@@ -70,7 +68,7 @@ def transition_distr(r, Es, cts, Zs):
         return 0
 
 # ----------------------------------------------------------------------------------------------------
-def w_mag(Es, cts, Zs, Dmin, Dmax, has_magnetic_field):
+def w_mag(Es, cts, Zs, Dmin, Dmax, has_magnetic_field, B):
 
     if has_magnetic_field == False:
         if Dmin <= cts <= Dmax:
@@ -80,7 +78,7 @@ def w_mag(Es, cts, Zs, Dmin, Dmax, has_magnetic_field):
 
     elif has_magnetic_field == True:
         
-        alp = 3 * cts / scattering_length(Es, Zs)
+        alp = 3 * cts / scattering_length(Es, Zs, B)
 
         if alp < 0.1:
             if Dmin <= cts <= Dmax:
@@ -89,10 +87,10 @@ def w_mag(Es, cts, Zs, Dmin, Dmax, has_magnetic_field):
                 return 0
 
         elif 0.1 <= alp <= 10:
-            return quad(transition_distr, Dmin, Dmax, args = (Es, cts, Zs))[0]
+            return quad(transition_distr, Dmin, Dmax, args = (Es, cts, Zs, B))[0]
 
         elif alp > 10:
-            return quad(diffusive_distr, Dmin, Dmax, args = (Es, cts, Zs))[0]
+            return quad(diffusive_distr, Dmin, Dmax, args = (Es, cts, Zs, B))[0]
 
 # ----------------------------------------------------------------------------------------------------
 def w_sim(Es, cts):
@@ -100,12 +98,12 @@ def w_sim(Es, cts):
     return (Es * 1e18) * cts
 
 # ----------------------------------------------------------------------------------------------------
-def w_spec(Es, Zs):
+def w_spec(Es, Zs, Rcut):
 
     return (Es * 1e18)**-Gmm * np.exp(-(Es * 1e18) / (Zs * Rcut))
 
 # ----------------------------------------------------------------------------------------------------
-def compute_spectrum(Zs, Dmin, Dmax, has_magnetic_field):
+def compute_spectrum(Zs, Rcut, Dmin, Dmax, has_magnetic_field, B):
 
     spec = np.zeros_like(ES) 
 
@@ -114,7 +112,7 @@ def compute_spectrum(Zs, Dmin, Dmax, has_magnetic_field):
 
             data = np.loadtxt(f"{SIMULATIONS_DIR}/{PARTICLES[iZs(Zs)]}/S_ID{iZs(Zs):02d}D{icts:02d}E0{iEs:02d}.dat")
 
-            spec += data * w_mag(Es, cts, Zs, Dmin, Dmax, has_magnetic_field) * w_sim(Es, cts) * w_spec(Es, Zs)
+            spec += data * w_mag(Es, cts, Zs, Dmin, Dmax, has_magnetic_field, B) * w_sim(Es, cts) * w_spec(Es, Zs, Rcut)
 
     return spec
 
@@ -128,12 +126,12 @@ def get_EGMF_label(has_magnetic_field):
         return 'EGMF'
     
 # ----------------------------------------------------------------------------------------------------
-def write_spectrum(Zs, has_magnetic_field, dist_arr): 
+def write_spectrum(Zs, Rcut, dist_arr, has_magnetic_field, B): 
 
     spec = []
     
     for idist in range(len(dist_arr) - 1): 
-        spec.append(compute_spectrum(Zs, dist_arr[idist], dist_arr[idist + 1], has_magnetic_field))
+        spec.append(compute_spectrum(Zs, Rcut, dist_arr[idist], dist_arr[idist + 1], has_magnetic_field, B))
     
     if np.array_equal(dist_arr, [1, 3, 9, 27, 81, 243, 729, CTSS[-1]]):
         np.savetxt(f"{RESULTS_DIR}/spec_{PARTICLES[iZs(Zs)]}_{get_EGMF_label(has_magnetic_field)}.dat", np.column_stack((ES * 1e18, np.array(spec).T / (ES[:, np.newaxis] * 1e18))), fmt = "%.15e")
@@ -144,10 +142,10 @@ def write_spectrum(Zs, has_magnetic_field, dist_arr):
 if __name__ == '__main__':
 
     # for Zs in ZSS:
-    #     write_spectrum(Zs, False, [1, 3, 9, 27, 81, 243, 729, CTSS[-1]])
-    #     write_spectrum(Zs, True, [1, 3, 9, 27, 81, 243, 729, CTSS[-1]])
+    #     write_spectrum(Zs, 1e21, [1, 3, 9, 27, 81, 243, 729, CTSS[-1]], False, 0)
+    #     write_spectrum(Zs, 1e21, [1, 3, 9, 27, 81, 243, 729, CTSS[-1]], True, 3)
 
     for Dmin in [3, 9, 27, 81, 243]:
-        write_spectrum(1, True, np.arange(Dmin, 10**3.5, Dmin))
+        write_spectrum(1, 1e19, np.arange(Dmin, 10**3.5, Dmin), True, 1)
 
 # ----------------------------------------------------------------------------------------------------
