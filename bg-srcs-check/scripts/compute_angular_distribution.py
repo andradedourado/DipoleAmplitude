@@ -63,27 +63,17 @@ def d2N_dAdt_bal(lbd_scatt, rs): # Equation (5)
     return np.exp(- rs / lbd_scatt) / (4 * np.pi * rs**2)
 
 # ----------------------------------------------------------------------------------------------------
-def compute_angular_distribution(cos_theta, lbd_scatt, rs): # Equation (6) 
-
-    if np.isclose(cos_theta, 1) == True:
-        return d2N_dAdt_bal(lbd_scatt, rs) + d2N_dAdt_diff(cos_theta, lbd_scatt, rs) 
-    
-    else: 
-        return d2N_dAdt_diff(cos_theta, lbd_scatt, rs)
-
-# ----------------------------------------------------------------------------------------------------
 def write_angular_distribution(lbd_scatt, rs, ilbd_scatt):
 
-    # cos_theta = np.cos(np.linspace(np.pi, 0, num = 100))
-    cos_theta = np.concatenate([np.linspace(-1, 0.95, num = 100), np.linspace(0.95, 1, num = 100)[1:]])
+    cos_theta = np.cos(np.linspace(np.pi, 0, num = 100))
+    # cos_theta = np.concatenate([np.linspace(-1, 0.95, num = 100), np.linspace(0.95, 1, num = 100)[1:]])
     dN_dcos_theta = np.zeros_like(cos_theta)
 
     for i in range(len(cos_theta)):
-        dN_dcos_theta[i] = compute_angular_distribution(cos_theta[i], lbd_scatt, rs)
-
-    dN_dcos_theta = dN_dcos_theta / simps(dN_dcos_theta, cos_theta) # Normalization 
+        dN_dcos_theta[i] = d2N_dAdt_diff(cos_theta[i], lbd_scatt, rs)
 
     if ilbd_scatt == -1:
+        dN_dcos_theta = dN_dcos_theta / (simps(dN_dcos_theta, cos_theta) + d2N_dAdt_bal(lbd_scatt, rs)) # Normalization 
         lbd_scatt_over_rs_str = str(lbd_scatt / rs).rstrip('0').rstrip('.').replace('.', '_')
         np.savetxt(f"{RESULTS_DIR}/angular_distr_{lbd_scatt_over_rs_str}_{rs}Mpc.dat", np.column_stack((cos_theta, dN_dcos_theta)), fmt = "%.15e")
 
@@ -93,12 +83,12 @@ def write_angular_distribution(lbd_scatt, rs, ilbd_scatt):
 # ----------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
-    rs = 27 # Mpc 
-    for lbd_scatt_over_rs in [0.01, 0.03, 0.1, 0.3, 1, 3]: 
-        write_angular_distribution(lbd_scatt_over_rs * rs, rs, -1)
+    # rs = 27 # Mpc 
+    # for lbd_scatt_over_rs in [0.01, 0.03, 0.1, 0.3, 1, 3]: 
+    #     write_angular_distribution(lbd_scatt_over_rs * rs, rs, -1)
 
-    # for rs in [3, 27, 243]:
-    #     for ilbd_scatt, lbd_scatt_over_rs in enumerate(np.logspace(-3, 3, num = 100)):
-    #         write_angular_distribution(lbd_scatt_over_rs * rs, rs, ilbd_scatt)
+    for rs in [3, 27, 243]:
+        for ilbd_scatt, lbd_scatt_over_rs in enumerate(np.logspace(-3, 3, num = 100)):
+            write_angular_distribution(lbd_scatt_over_rs * rs, rs, ilbd_scatt)
 
 # ----------------------------------------------------------------------------------------------------
