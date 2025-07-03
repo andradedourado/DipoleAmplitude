@@ -128,22 +128,26 @@ def get_EGMF_label(has_magnetic_field):
         return 'EGMF'
     
 # ----------------------------------------------------------------------------------------------------
-def write_spectrum(Zs, has_magnetic_field):
-
-    dist_arr = [1, 3, 9, 27, 81, 243, 729, CTSS[-1]] # Mpc 
+def write_spectrum(Zs, has_magnetic_field, dist_arr): 
 
     spec = []
     
     for idist in range(len(dist_arr) - 1): 
         spec.append(compute_spectrum(Zs, dist_arr[idist], dist_arr[idist + 1], has_magnetic_field))
     
-    np.savetxt(f"{RESULTS_DIR}/spec_{PARTICLES[iZs(Zs)]}_{get_EGMF_label(has_magnetic_field)}.dat", np.column_stack((ES * 1e18, np.array(spec).T / (ES[:, np.newaxis] * 1e18))), fmt = "%.15e")
+    if np.array_equal(dist_arr, [1, 3, 9, 27, 81, 243, 729, CTSS[-1]]):
+        np.savetxt(f"{RESULTS_DIR}/spec_{PARTICLES[iZs(Zs)]}_{get_EGMF_label(has_magnetic_field)}.dat", np.column_stack((ES * 1e18, np.array(spec).T / (ES[:, np.newaxis] * 1e18))), fmt = "%.15e")
+    else:
+        np.savetxt(f"{RESULTS_DIR}/spec_{PARTICLES[iZs(Zs)]}_{get_EGMF_label(has_magnetic_field)}_Dmin{int(dist_arr[0])}Mpc.dat", np.column_stack((ES * 1e18, np.array(spec).T / (ES[:, np.newaxis] * 1e18))), fmt = "%.15e")
 
 # ----------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
-    for Zs in ZSS:
-        write_spectrum(Zs, False)
-        write_spectrum(Zs, True)
+    # for Zs in ZSS:
+    #     write_spectrum(Zs, False, [1, 3, 9, 27, 81, 243, 729, CTSS[-1]])
+    #     write_spectrum(Zs, True, [1, 3, 9, 27, 81, 243, 729, CTSS[-1]])
+
+    for Dmin in [3, 9, 27, 81, 243]:
+        write_spectrum(1, True, np.arange(Dmin, 10**3.5, Dmin))
 
 # ----------------------------------------------------------------------------------------------------
