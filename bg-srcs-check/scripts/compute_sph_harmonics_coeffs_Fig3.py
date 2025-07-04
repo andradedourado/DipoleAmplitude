@@ -21,7 +21,7 @@ def compute_sph_harmonics_coeffs(l, rs, ilbd_scatt):
     return (2*l + 1) / 2 / N * (simps(integrand, x) + d2N_dAdt_bal(lbd_scatt_over_rs[ilbd_scatt] * rs, rs) * legendre(l)(1))
 
 # ----------------------------------------------------------------------------------------------------
-def write_sph_harmonics_coeffs(l, lbd_scatt_over_rs, rs):
+def write_sph_harmonics_coeffs(l, rs):
 
     Phi_l = np.zeros_like(lbd_scatt_over_rs)
 
@@ -31,12 +31,12 @@ def write_sph_harmonics_coeffs(l, lbd_scatt_over_rs, rs):
     np.savetxt(f"{RESULTS_DIR}/sph_harmonics_coeffs_{l}_{rs}Mpc.dat", np.column_stack((lbd_scatt_over_rs, Phi_l)), fmt = "%.15e")
 
 # ----------------------------------------------------------------------------------------------------
-if __name__ == '__main__': # Figure 3
+if __name__ == '__main__':
 
     for rs in [3, 27, 243]:
-        write_sph_harmonics_coeffs(1, lbd_scatt_over_rs, rs)
+        write_sph_harmonics_coeffs(1, rs)
 
     for l in range(5):
-        write_sph_harmonics_coeffs(l, lbd_scatt_over_rs, 27)
+        write_sph_harmonics_coeffs(l, 27)
 
 # ----------------------------------------------------------------------------------------------------
