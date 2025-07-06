@@ -49,7 +49,7 @@ def diffusive_distr(r, Es, cts, Zs, B):
 
     if r <= cts:
         sgm = np.sqrt(lbd_scatt * cts / 3)
-        A = (sgm**2 * (np.sqrt(np.pi / 2) * sgm * erf(cts / (2*sgm))) - cts * np.exp(-cts**2 / (2 * sgm**2)))**-1
+        A = (sgm**2 * (np.sqrt(np.pi / 2) * sgm * erf(cts / (2*sgm)) - cts * np.exp(-cts**2 / (2 * sgm**2))))**-1
         return A * r**2 * np.exp(-r**2 / (2 * sgm**2))
 
     elif r > cts:
@@ -141,9 +141,9 @@ def write_spectrum(Zs, Rcut, dist_arr, has_magnetic_field, B):
 # ----------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
-    # for Zs in ZSS:
-    #     write_spectrum(Zs, 1e21, [1, 3, 9, 27, 81, 243, 729, CTSS[-1]], False, 0)
-    #     write_spectrum(Zs, 1e21, [1, 3, 9, 27, 81, 243, 729, CTSS[-1]], True, 3)
+    for Zs in ZSS:
+        write_spectrum(Zs, 1e21, [1, 3, 9, 27, 81, 243, 729, CTSS[-1]], False, 0)
+        write_spectrum(Zs, 1e21, [1, 3, 9, 27, 81, 243, 729, CTSS[-1]], True, 3)
 
     for Dmin in [3, 9, 27, 81, 243]:
         write_spectrum(1, 1e19, np.arange(Dmin, 10**3.5, Dmin), True, 1)

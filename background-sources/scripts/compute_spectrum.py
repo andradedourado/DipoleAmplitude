@@ -56,7 +56,7 @@ def diffusive_distr(r, Es, cts, Zs):
 
     if r <= cts:
         sgm = np.sqrt(lbd_scatt * cts / 3)
-        A = (sgm**2 * (np.sqrt(np.pi / 2) * sgm * erf(cts / (2*sgm))) - cts * np.exp(-cts**2 / (2 * sgm**2)))**-1
+        A = (sgm**2 * (np.sqrt(np.pi / 2) * sgm * erf(cts / (2*sgm)) - cts * np.exp(-cts**2 / (2 * sgm**2))))**-1
         return A * r**2 * np.exp(-r**2 / (2 * sgm**2))
 
     elif r > cts:
