@@ -54,7 +54,7 @@ def plot_sph_harmonics_coeffs_Fig3():
     plt.text(4e-3, 6e-3, r'$\delta = \lambda_{\rm scatt}/r_s$', rotation = 52, fontsize = 12, color = 'gray', ha = 'center', va = 'center', rotation_mode = 'anchor')
 
     for rs in [3, 27, 243]:
-        data = np.loadtxt(f"{RESULTS_DIR}/sph_harmonics_coeffs_{rs}Mpc_1.dat")
+        data = np.loadtxt(f"{RESULTS_DIR}/sph_harmonics_coeffs_{rs}Mpc_01.dat")
         Lang2021_data = np.loadtxt(f"{REFERENCES_DIR}/Lang2021_dlt_lbd_scatt_over_rs_{rs}Mpc.dat")
         plt.plot(data[:,0], data[:,1], c = select_color_for_rs_Fig3(rs))
         plt.plot(Lang2021_data[:,0], Lang2021_data[:,1], c = select_color_for_rs_Fig3(rs), ls = '--')
@@ -74,15 +74,15 @@ def plot_sph_harmonics_coeffs_Fig3():
     plt.ylim([1e-3, 5])
     plt.xlabel(r'$\lambda_{\rm scatt} / r_s$')
     plt.ylabel(r'Dipole amplitude')
-    plt.savefig(f"{FIGURES_DIR}/sph_harmonics_coeffs_1.pdf", bbox_inches = 'tight')
-    plt.savefig(f"{FIGURES_DIR}/sph_harmonics_coeffs_1.png", bbox_inches = 'tight', dpi = 300)
+    plt.savefig(f"{FIGURES_DIR}/sph_harmonics_coeffs_01.pdf", bbox_inches = 'tight')
+    plt.savefig(f"{FIGURES_DIR}/sph_harmonics_coeffs_01.png", bbox_inches = 'tight', dpi = 300)
     plt.show()
 
 # ----------------------------------------------------------------------------------------------------
 def plot_sph_harmonics_coeffs_Fig4():
 
     for Dmin in [3, 9, 27, 81, 243]:
-        LAD_data = np.loadtxt(f"{RESULTS_DIR}/sph_harmonics_coeffs_1_{Dmin}Mpc_QLT.dat")
+        LAD_data = np.loadtxt(f"{RESULTS_DIR}/sph_harmonics_coeffs_QLT_{Dmin}Mpc_01.dat")
         Lang2021_data = np.loadtxt(f"{REFERENCES_DIR}/Lang2021_dlt1_log10E_Dmin_{Dmin}Mpc.dat")
         plt.plot(np.log10(LAD_data[:,0]), LAD_data[:,1], c = select_color_for_rs_Fig4(Dmin), label = r'${} \: \rm Mpc$'.format(Dmin))
         plt.plot(Lang2021_data[:,0], Lang2021_data[:,1], c = select_color_for_rs_Fig4(Dmin), ls = '--')
@@ -96,14 +96,14 @@ def plot_sph_harmonics_coeffs_Fig4():
     plt.xlabel(r'$\log_{10}{(\rm Energy/eV)}$')
     plt.ylabel(r'Dipole amplitude')
     plt.legend(title = r'$D_{\rm min}$')
-    plt.savefig(f"{FIGURES_DIR}/sph_harmonics_coeffs_1_QLT.pdf", bbox_inches = 'tight')
-    plt.savefig(f"{FIGURES_DIR}/sph_harmonics_coeffs_1_QLT.png", bbox_inches = 'tight', dpi = 300)
+    plt.savefig(f"{FIGURES_DIR}/sph_harmonics_coeffs_QLT_01.pdf", bbox_inches = 'tight')
+    plt.savefig(f"{FIGURES_DIR}/sph_harmonics_coeffs_QLT_01.png", bbox_inches = 'tight', dpi = 300)
     plt.show()
 
 # ----------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
     plot_sph_harmonics_coeffs_Fig3()
-    # plot_sph_harmonics_coeffs_Fig4()
+    plot_sph_harmonics_coeffs_Fig4()
 
 # ----------------------------------------------------------------------------------------------------

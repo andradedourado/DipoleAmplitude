@@ -28,7 +28,7 @@ def write_sph_harmonics_coeffs(l, rs):
     for ilbd_scatt in range(len(lbd_scatt_over_rs)):
         Phi_l[ilbd_scatt] = compute_sph_harmonics_coeffs(l, rs, ilbd_scatt)
 
-    np.savetxt(f"{RESULTS_DIR}/sph_harmonics_coeffs_{rs}Mpc_{l}.dat", np.column_stack((lbd_scatt_over_rs, Phi_l)), fmt = "%.15e")
+    np.savetxt(f"{RESULTS_DIR}/sph_harmonics_coeffs_{rs}Mpc_{l:02d}.dat", np.column_stack((lbd_scatt_over_rs, Phi_l)), fmt = "%.15e")
 
 # ----------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     for rs in [3, 27, 243]:
         write_sph_harmonics_coeffs(1, rs)
 
-    for l in range(5):
+    for l in range(100):
         write_sph_harmonics_coeffs(l, 27)
 
 # ----------------------------------------------------------------------------------------------------

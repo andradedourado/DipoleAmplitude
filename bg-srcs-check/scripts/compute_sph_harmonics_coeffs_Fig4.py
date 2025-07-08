@@ -55,7 +55,7 @@ def write_sph_harmonics_coeffs(l, rs):
     for iE in range(len(ES)):
         Phi_l[iE] = compute_sph_harmonics_coeffs(l, rs, iE)
 
-    np.savetxt(f"{RESULTS_DIR}/sph_harmonics_coeffs_{l}_{int(rs)}Mpc_QLT.dat", np.column_stack((ES * 1e18, Phi_l)), fmt = "%.15e")
+    np.savetxt(f"{RESULTS_DIR}/sph_harmonics_coeffs_QLT_{int(rs)}Mpc_{l:02d}.dat", np.column_stack((ES * 1e18, Phi_l)), fmt = "%.15e")
 
 # ----------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
