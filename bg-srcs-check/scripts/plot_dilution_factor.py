@@ -21,7 +21,7 @@ def plot_dilution_factor():
     plt.gca().xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, pos: f'{x:g}'))
 
     for iDmin, Dmin in enumerate([3, 9, 27, 81, 243]):
-        LAD_data = np.loadtxt(f"{RESULTS_DIR}/spec_1H_EGMF_Dmin{int(Dmin)}Mpc.dat")
+        LAD_data = np.loadtxt(f"{RESULTS_DIR}/spec_1H_EGMF_Dmin_{int(Dmin)}Mpc.dat")
         Lang2020_data = np.loadtxt(f"{REFERENCES_DIR}/Lang2020_dilution_factor_{int(Dmin)}Mpc.dat")
         plt.plot(np.log10(LAD_data[:,0]), LAD_data[:,1] / LAD_data[:, 1:].sum(axis = 1), c = cm.PuRd(np.linspace(0, 1, 10)[9 - 2 * iDmin]), label = r'${} \: \rm Mpc$'.format(int(Dmin)))
         plt.plot(Lang2020_data[:,0], Lang2020_data[:,1], c = cm.PuRd(np.linspace(0, 1, 10)[9 - 2 * iDmin]), ls = '--', label = '_nolabel_')
