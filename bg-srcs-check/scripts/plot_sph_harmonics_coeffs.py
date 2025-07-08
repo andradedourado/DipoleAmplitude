@@ -54,7 +54,7 @@ def plot_sph_harmonics_coeffs_Fig3():
     plt.text(4e-3, 6e-3, r'$\delta = \lambda_{\rm scatt}/r_s$', rotation = 52, fontsize = 12, color = 'gray', ha = 'center', va = 'center', rotation_mode = 'anchor')
 
     for rs in [3, 27, 243]:
-        data = np.loadtxt(f"{RESULTS_DIR}/sph_harmonics_coeffs_1_{rs}Mpc.dat")
+        data = np.loadtxt(f"{RESULTS_DIR}/sph_harmonics_coeffs_{rs}Mpc_1.dat")
         Lang2021_data = np.loadtxt(f"{REFERENCES_DIR}/Lang2021_dlt_lbd_scatt_over_rs_{rs}Mpc.dat")
         plt.plot(data[:,0], data[:,1], c = select_color_for_rs_Fig3(rs))
         plt.plot(Lang2021_data[:,0], Lang2021_data[:,1], c = select_color_for_rs_Fig3(rs), ls = '--')
@@ -103,7 +103,7 @@ def plot_sph_harmonics_coeffs_Fig4():
 # ----------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
-    # plot_sph_harmonics_coeffs_Fig3()
-    plot_sph_harmonics_coeffs_Fig4()
+    plot_sph_harmonics_coeffs_Fig3()
+    # plot_sph_harmonics_coeffs_Fig4()
 
 # ----------------------------------------------------------------------------------------------------

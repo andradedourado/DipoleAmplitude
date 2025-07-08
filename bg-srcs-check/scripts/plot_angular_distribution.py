@@ -22,7 +22,7 @@ def plot_angular_distribution(): # Figure 2
 
         lbd_scatt_over_rs_str = str(lbd_scatt_over_rs).rstrip('0').rstrip('.').replace('.', '_')
 
-        data_LAD = np.loadtxt(f"{RESULTS_DIR}/angular_distr_{lbd_scatt_over_rs_str}_27Mpc.dat")
+        data_LAD = np.loadtxt(f"{RESULTS_DIR}/angular_distr_27Mpc_{lbd_scatt_over_rs_str}.dat")
         data_Lang2021 = np.loadtxt(f"{REFERENCES_DIR}/Lang2021_dN_dcostheta_{lbd_scatt_over_rs_str}.dat")
 
         plt.plot(data_LAD[:,0], 2 * data_LAD[:,1], c = cm.OrRd(np.linspace(0, 1, 20)[15 - 2 * i]), label = lbd_scatt_over_rs)
@@ -46,7 +46,7 @@ def plot_angular_distribution_xchecks(lbd_scatt_over_rs):
 
     lbd_scatt_over_rs_str = str(lbd_scatt_over_rs).rstrip('0').rstrip('.').replace('.', '_')
 
-    data_LAD = np.loadtxt(f"{RESULTS_DIR}/angular_distr_{lbd_scatt_over_rs_str}_27Mpc.dat")
+    data_LAD = np.loadtxt(f"{RESULTS_DIR}/angular_distr_27Mpc_{lbd_scatt_over_rs_str}.dat")
     data_Lang2021 = np.loadtxt(f"{REFERENCES_DIR}/Lang2021_dN_dcostheta_{lbd_scatt_over_rs_str}.dat")
 
     plt.plot(data_LAD[:,0], 2 * data_LAD[:,1], c = 'k', label = lbd_scatt_over_rs)
