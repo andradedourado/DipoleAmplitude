@@ -23,7 +23,6 @@ def plot_angular_power_spectrum():
         plt.plot(LAD_data[:,0], np.sqrt(LAD_data[:,1]), c = cm.Greens(np.linspace(0, 1, 20)[19-3*l]), label = r'$l = {}$'.format(l))
         plt.plot(Lang2021_data[:,0], Lang2021_data[:,1], c = cm.Greens(np.linspace(0, 1, 20)[19-3*l]), ls = '--', label = '_nolegend_')
 
-
     # Lang2021_data = np.loadtxt(f"{REFERENCES_DIR}/Lang2021_Cl_lbd_scatt_over_rs_f_non-dip.dat")
     # plt.plot(Lang2021_data[:,0], Lang2021_data[:,1], c = 'k', ls = '--', label = r'$f_{\rm non-dip}$')
 
