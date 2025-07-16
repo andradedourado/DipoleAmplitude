@@ -12,6 +12,7 @@ plt.rcParams.update({'legend.fontsize': 'large',
 'ytick.labelsize': 'x-large'})
 
 FIGURES_DIR = "../figures"
+REFERENCES_DIR = "../references"
 RESULTS_DIR = "../results"
 
 # ----------------------------------------------------------------------------------------------------
@@ -44,6 +45,9 @@ def plot_dipole_amplitude(L):
     for galaxy_type in ['AGN', 'AGN+SBG', 'SBG']:
         data = np.loadtxt(f"{RESULTS_DIR}/dipole_amplitude_full_sky_{galaxy_type}_{L}.dat")
         plt.plot(np.log10(data[:,0]), data[:,1], c = get_galaxy_color(galaxy_type))
+
+    Auger_01_data = np.loadtxt(f"{REFERENCES_DIR}/Auger_2020_01.dat")
+    plt.errorbar(np.log10(Auger_01_data[:,0] * 1e18), Auger_01_data[:,1], [Auger_01_data[:,1] - Auger_01_data[:,2], Auger_01_data[:,3] - Auger_01_data[:,1]], c = 'k', ls = 'None', marker = '.')
 
     plt.gca().add_artist(AnchoredText(f'{format_luminosity_label(L)}', loc = 'upper left', frameon = False, prop = {'fontsize': 'x-large'}))
 
