@@ -1,6 +1,6 @@
 from matplotlib.offsetbox import AnchoredText
 from matplotlib.pylab import cm
-from matplotlib.ticker import FuncFormatter
+from matplotlib.ticker import MultipleLocator
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -39,6 +39,21 @@ def format_luminosity_label(L):
     elif L == 'Lgamma':
         return r'$L_\gamma$'
 
+
+# ----------------------------------------------------------------------------------------------------
+def plot_Auger_dipole_amplitude():
+
+    Auger_01_data = np.loadtxt(f"{REFERENCES_DIR}/Auger_2020_01.dat")
+    plt.errorbar(np.log10(Auger_01_data[:,0] * 1e18), Auger_01_data[:,1], [Auger_01_data[:,1] - Auger_01_data[:,2], Auger_01_data[:,3] - Auger_01_data[:,1]], c = 'k', ls = 'None', marker = '.')
+    
+    Auger_02_data = np.loadtxt(f"{REFERENCES_DIR}/Auger_2020_02.dat")
+    x = np.log10(Auger_02_data[:,0] * 1e18)
+    y = Auger_02_data[:,1]
+    xlow = np.log10(Auger_02_data[:,2] * 1e18)  
+    xhigh = np.log10(Auger_02_data[:,3] * 1e18) 
+    yerr = Auger_02_data[:,1] - Auger_02_data[:,4]
+    plt.errorbar(x, y, xerr = np.vstack([x - xlow, xhigh - x]), yerr = yerr, uplims = 1, c = 'k', ls = 'None', marker = 'None')
+
 # ----------------------------------------------------------------------------------------------------
 def plot_dipole_amplitude(L):
 
@@ -46,14 +61,16 @@ def plot_dipole_amplitude(L):
         data = np.loadtxt(f"{RESULTS_DIR}/dipole_amplitude_full_sky_{galaxy_type}_{L}.dat")
         plt.plot(np.log10(data[:,0]), data[:,1], c = get_galaxy_color(galaxy_type))
 
-    Auger_01_data = np.loadtxt(f"{REFERENCES_DIR}/Auger_2020_01.dat")
-    plt.errorbar(np.log10(Auger_01_data[:,0] * 1e18), Auger_01_data[:,1], [Auger_01_data[:,1] - Auger_01_data[:,2], Auger_01_data[:,3] - Auger_01_data[:,1]], c = 'k', ls = 'None', marker = '.')
+    plot_Auger_dipole_amplitude()
 
     plt.gca().add_artist(AnchoredText(f'{format_luminosity_label(L)}', loc = 'upper left', frameon = False, prop = {'fontsize': 'x-large'}))
-
-    plt.gca().xaxis.set_major_formatter(FuncFormatter(lambda x, _: f'{x:.0f}' if x.is_integer() else f'{x}'))
+    
+    ax = plt.gca()
+    ax.xaxis.set_major_locator(MultipleLocator(0.5))    
     
     plt.yscale('log')
+    plt.xlim([18, 20])
+    plt.ylim([3.e-4, 3])
     plt.xlabel(r'$\log_{10}(\rm Energy/ eV)$')
     plt.ylabel('Dipole amplitude')
     plt.legend(['AGN', 'AGN + SBG', 'SBG'], loc = 'lower right')
