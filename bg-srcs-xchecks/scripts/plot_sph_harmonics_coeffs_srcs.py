@@ -27,22 +27,22 @@ def iZ(Z):
         raise ValueError(f"Z ({Z}) not found in ZS.")
     
 # ----------------------------------------------------------------------------------------------------
-def get_color(Zs):
+def get_color(iDmin, Z):
 
-    if Zs == 1:
-        return cm.PuRd(np.linspace(0, 1, 10)[7])
+    if Z == 1:
+        return cm.PuRd(np.linspace(0, 1, 10)[9 - iDmin])
     
-    elif Zs == 2:
-        return cm.BuGn(np.linspace(0, 1, 10)[7])
+    elif Z == 2:
+        return cm.BuGn(np.linspace(0, 1, 10)[9 - iDmin])
     
-    elif Zs == 7:
-        return cm.OrRd(np.linspace(0, 1, 10)[7])
+    elif Z == 7:
+        return cm.OrRd(np.linspace(0, 1, 10)[9 - iDmin])
     
-    elif Zs == 14:
-        return cm.GnBu(np.linspace(0, 1, 10)[7])
+    elif Z == 14:
+        return cm.GnBu(np.linspace(0, 1, 10)[9 - iDmin])
     
-    elif Zs == 26:
-        return cm.BuPu(np.linspace(0, 1, 10)[7])
+    elif Z == 26:
+        return cm.BuPu(np.linspace(0, 1, 10)[9 - iDmin])
 
 # ----------------------------------------------------------------------------------------------------
 def plot_sph_harmonics_coeffs_Fig7():
@@ -50,10 +50,10 @@ def plot_sph_harmonics_coeffs_Fig7():
     for Z in ZS:
         Phi_0_tot = np.loadtxt(f"{RESULTS_DIR}/Figures6to8/Phi_0_tot_27Mpc_{PARTICLES[iZ(Z)]}_1nG.dat")
         Phi_1_tot = np.loadtxt(f"{RESULTS_DIR}/Figures6to8/Phi_1_tot_27Mpc_{PARTICLES[iZ(Z)]}_1nG.dat")
-        plt.plot(np.log10(Phi_0_tot[:,0]), Phi_1_tot[:,1] / Phi_0_tot[:,1], c = get_color(Z), label = PARTICLES_LEGEND[iZ(Z)])
+        plt.plot(np.log10(Phi_0_tot[:,0]), Phi_1_tot[:,1] / Phi_0_tot[:,1], c = get_color(2, Z), label = PARTICLES_LEGEND[iZ(Z)])
 
         Lang2021_data = np.loadtxt(f"{REFERENCES_DIR}/Lang2021_dlt_log10E_27Mpc_{PARTICLES[iZ(Z)]}_1nG.dat")
-        plt.plot(Lang2021_data[:,0], Lang2021_data[:,1], c = get_color(Z), ls = '--', label  = '__nolegend__')
+        plt.plot(Lang2021_data[:,0], Lang2021_data[:,1], c = get_color(2, Z), ls = '--', label  = '__nolegend__')
 
     LAD_lgnd = lines.Line2D([], [], c = 'k', ls = '-', label = r'LAD')
     Lang2021_lgnd = lines.Line2D([], [], c = 'k', ls = '--', label = r'Lang et al. (2021)')
@@ -68,8 +68,34 @@ def plot_sph_harmonics_coeffs_Fig7():
     plt.show()
 
 # ----------------------------------------------------------------------------------------------------
+def plot_sph_harmonics_coeffs_Fig9(Z):
+
+    for iDmin, Dmin in enumerate([3, 9, 27, 81, 243]):
+        Phi_0_tot = np.loadtxt(f"{RESULTS_DIR}/Figures6to8/Phi_0_tot_{int(Dmin)}Mpc_{PARTICLES[iZ(Z)]}_1nG.dat")
+        Phi_1_tot = np.loadtxt(f"{RESULTS_DIR}/Figures6to8/Phi_1_tot_{int(Dmin)}Mpc_{PARTICLES[iZ(Z)]}_1nG.dat")
+        plt.plot(np.log10(Phi_0_tot[:,0]), Phi_1_tot[:,1] / Phi_0_tot[:,1], c = get_color(iDmin, Z), label = f'{int(Dmin)}')
+
+        Lang2021_data = np.loadtxt(f"{REFERENCES_DIR}/Lang2021_dlt_log10E_{int(Dmin)}Mpc_{PARTICLES[iZ(Z)]}_1nG.dat")
+        plt.plot(Lang2021_data[:,0], Lang2021_data[:,1], c = get_color(iDmin, Z), ls = '--', label  = '__nolegend__')
+
+    LAD_lgnd = lines.Line2D([], [], c = 'k', ls = '-', label = r'LAD')
+    Lang2021_lgnd = lines.Line2D([], [], c = 'k', ls = '--', label = r'Lang et al. (2021)')
+    plt.gca().add_artist(plt.legend(handles = [LAD_lgnd, Lang2021_lgnd], frameon = True, loc = 'upper left', bbox_to_anchor = (0.215, 1.)))
+
+    plt.yscale("log")
+    plt.xlabel(r"$\log_{10}{(\rm Energy / eV)}$")
+    plt.ylabel(r"Dipole amplitude")
+    plt.legend(title = r'$D_{\rm min} \: \rm [Mpc]$', loc = 'upper left')
+    plt.savefig(f"{FIGURES_DIR}/sph_harmonics_coeffs_{PARTICLES[iZ(Z)]}_Fig9.pdf", bbox_inches = 'tight')
+    plt.savefig(f"{FIGURES_DIR}/sph_harmonics_coeffs_{PARTICLES[iZ(Z)]}_Fig9.png", bbox_inches = 'tight', dpi = 300)
+    plt.show()
+
+# ----------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
-    plot_sph_harmonics_coeffs_Fig7()
+    # plot_sph_harmonics_coeffs_Fig7()
+    
+    for Z in ZS:
+        plot_sph_harmonics_coeffs_Fig9(Z)
 
 # ----------------------------------------------------------------------------------------------------
