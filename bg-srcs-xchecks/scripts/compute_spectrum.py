@@ -155,11 +155,11 @@ if __name__ == '__main__':
     #     write_spectrum(Zs, 1e21, [1, 3, 9, 27, 81, 243, 729, CTSS[-1]], False, 0)
     #     write_spectrum(Zs, 1e21, [1, 3, 9, 27, 81, 243, 729, CTSS[-1]], True, 3)
 
-    for Dmin in [3, 9, 27, 81, 243]:
-        for Zs in ZSS:
-            write_spectrum(Zs, 1e19, np.arange(Dmin, 10**3.5, Dmin), True, 1)
+    # for Dmin in [3, 9, 27, 81, 243]:
+    #     for Zs in ZSS:
+    #         write_spectrum(Zs, 1e19, np.arange(Dmin, 10**3.5, Dmin), True, 1)
 
-    # for B in [0.1, 0.3, 3]:
-    #     write_spectrum(7, 1e19, np.arange(3, 10**3.5, 3), True, B)
+    for B in [0.1, 0.3, 3]:
+        write_spectrum(7, 1e19, np.arange(3, 10**3.5, 3), True, B)
 
 # ----------------------------------------------------------------------------------------------------
