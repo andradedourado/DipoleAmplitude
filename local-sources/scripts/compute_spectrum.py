@@ -13,8 +13,12 @@ GALAXIES = ['CenA', 'ForA', 'VirA', \
 PARTICLES = ['1H', '4He', '14N', '28Si', '56Fe']
 ZSS = [1, 2, 7, 14, 26]
 
-Gmm = 1.22
-Rcut = 10**18.72 # V
+EeV_to_eV = 1e18
+
+Gmm = -1.47
+Rcut = 10**18.19 # V
+
+E0 = EeV_to_eV
 
 # ----------------------------------------------------------------------------------------------------
 def iZs(Zs):
@@ -27,12 +31,21 @@ def iZs(Zs):
 # ----------------------------------------------------------------------------------------------------
 def w_sim(Es):
 
-    return (Es * 1e18)
+    return Es * EeV_to_eV
 
 # ----------------------------------------------------------------------------------------------------
 def w_spec(Es, Zs):
 
-    return (Es * 1e18)**-Gmm * np.exp(-(Es * 1e18) / (Zs * Rcut))
+    Es = Es * EeV_to_eV
+    Ecut = Zs * Rcut
+
+    mask = Es <= Ecut
+
+    w_spec = np.zeros_like(Es)
+    w_spec[mask] = (Es[mask] / E0)**-Gmm
+    w_spec[~mask] = (Es[~mask] / E0)**-Gmm * np.exp(1 - Es[~mask] / Ecut)
+
+    return w_spec
 
 # ----------------------------------------------------------------------------------------------------
 def compute_spectrum(EGMF, galaxy, Zs):
