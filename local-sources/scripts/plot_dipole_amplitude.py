@@ -4,9 +4,9 @@ from matplotlib.ticker import MultipleLocator
 import matplotlib.pyplot as plt
 import numpy as np
 
-plt.rcParams.update({'legend.fontsize': 'large',
-'legend.title_fontsize': 'large',
-'axes.labelsize': 'x-large',
+plt.rcParams.update({'legend.fontsize': 'x-large',
+'legend.title_fontsize': 'x-large',
+'axes.labelsize': 'xx-large',
 'axes.titlesize': 'xx-large',
 'xtick.labelsize': 'x-large',
 'ytick.labelsize': 'x-large'})
