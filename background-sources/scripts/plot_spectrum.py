@@ -44,15 +44,15 @@ def get_color(Zs):
         return cm.BuPu(np.linspace(0, 1, 10)[7])
 
 # ----------------------------------------------------------------------------------------------------
-def plot_spectrum():
+def plot_spectrum(Dshell):
 
-    spec = np.zeros(len(np.loadtxt(f"{RESULTS_DIR}/norm_spec_4He_EGMF.dat")))
+    spec = np.zeros(len(np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/norm_spec_4He_EGMF.dat")))
 
     for Zs in ZSS[1:]:
-        data = np.loadtxt(f"{RESULTS_DIR}/norm_spec_{PARTICLES[iZs(Zs)]}_EGMF.dat")    
-        y_smooth = savgol_filter(data[:,0]**3 * np.sum(data[:, 27:], axis = 1), window_length = 11, polyorder = 3)
+        data = np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/norm_spec_{PARTICLES[iZs(Zs)]}_EGMF.dat")    
+        y_smooth = savgol_filter(data[:,0]**3 * np.sum(data[:, 1:], axis = 1), window_length = 11, polyorder = 3)
         plt.plot(np.log10(data[:, 0]), y_smooth, c = get_color(Zs), label = PARTICLES_LEGEND[iZs(Zs)])
-        # plt.plot(np.log10(data[:, 0]), data[:,0]**3 * np.sum(data[:, 27:], axis = 1), c = get_color(Zs), label = PARTICLES_LEGEND[iZs(Zs)])
+        # plt.plot(np.log10(data[:, 0]), data[:,0]**3 * np.sum(data[:, 1:], axis = 1), c = get_color(Zs), label = PARTICLES_LEGEND[iZs(Zs)])
         spec += y_smooth
 
     plt.plot(np.log10(data[:, 0]), spec, c = 'k', label = 'All')
@@ -63,13 +63,14 @@ def plot_spectrum():
     plt.xlabel(r'$\log_{10}(\rm Energy / eV)$')
     plt.ylabel(r'$E^3 \times {\rm Intensity} \: \rm [arb. units]$')
     plt.legend(title = r'$Z_s$')
-    plt.savefig(f"{FIGURES_DIR}/spectrum.pdf", bbox_inches = 'tight')
-    plt.savefig(f"{FIGURES_DIR}/spectrum.png", bbox_inches = 'tight', dpi = 300)
+    # plt.savefig(f"{FIGURES_DIR}/spectrum_{int(Dshell)}Mpc.pdf", bbox_inches = 'tight')
+    # plt.savefig(f"{FIGURES_DIR}/spectrum_{int(Dshell)}Mpc.png", bbox_inches = 'tight', dpi = 300)
     plt.show()
 
 # ----------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
-    plot_spectrum()
+    for Dshell in range(1, 10):
+        plot_spectrum(Dshell)
 
 # ----------------------------------------------------------------------------------------------------

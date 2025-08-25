@@ -23,7 +23,7 @@ def iZ(Z):
 # ----------------------------------------------------------------------------------------------------
 def scattering_length(E, Z):
 
-    RL = 3.5 * 1.081 / Z * E / B # Mpc; E in EeV and B in nG 
+    RL = 1.081 / Z * E / B # Mpc; E in EeV and B in nG 
 
     if RL < lbd_coh:
         return (RL/lbd_coh)**(1/3) * lbd_coh # Mpc
@@ -34,34 +34,34 @@ def scattering_length(E, Z):
 # ----------------------------------------------------------------------------------------------------
 def d2N_dAdt_bal(E, rs, Z): # Equation (5)
 
-    return np.exp(- rs / scattering_length(B, E, Z)) / (4 * np.pi * rs**2)
+    return np.exp(- rs / scattering_length(E, Z)) / (4 * np.pi * rs**2)
 
 # ----------------------------------------------------------------------------------------------------
 def compute_sph_harmonics_coeffs(l, iE, rs, Z):
 
     data = np.loadtxt(f"{SIMULATIONS_DIR}/{PARTICLES[iZ(Z)]}/{int(rs)}Mpc/angular_distr_{iE:02d}.dat")
 
-    N = (simps(data[:,1], data[:,0]) + d2N_dAdt_bal(B, ES[iE], rs, Z)) / 2
+    N = (simps(data[:,1], data[:,0]) + d2N_dAdt_bal(ES[iE], rs, Z)) / 2
     x, integrand = data[:,0], legendre(l)(data[:,0]) * data[:,1]        
 
-    return (2*l + 1) / 2 / N * (simps(integrand, x) + d2N_dAdt_bal(B, ES[iE], rs, Z) * legendre(l)(1))
+    return (2*l + 1) / 2 / N * (simps(integrand, x) + d2N_dAdt_bal(ES[iE], rs, Z) * legendre(l)(1))
 
 # ----------------------------------------------------------------------------------------------------
-def Phi_l_tot(l, Z):
+def Phi_l_tot(l, Dshell, Z):
 
-    spec = np.loadtxt(f"{RESULTS_DIR}/spec_{PARTICLES[iZ(Z)]}_EGMF.dat")
+    spec = np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/spec_{PARTICLES[iZ(Z)]}_EGMF.dat")
 
     Phi_l_tot = np.zeros_like(ES)
 
-    for irs, rs in enumerate(np.arange(27, 1000, 1)):
+    for irs, rs in enumerate(np.arange(27, 860, Dshell)):
         
-        if irs + 1 >= spec.shape[1]:
+        if irs + 1 >= spec.shape[1]: # To understand
             break
         
         Phi_l = np.zeros_like(ES)
         
         for iE in range(len(ES)):
-            Phi_l_temp = compute_sph_harmonics_coeffs(l, B, iE, rs, Z)
+            Phi_l_temp = compute_sph_harmonics_coeffs(l, iE, rs, Z)
             if np.isfinite(Phi_l_temp):
                 Phi_l[iE] = Phi_l_temp
 
@@ -70,30 +70,28 @@ def Phi_l_tot(l, Z):
     return spec[:,0], np.sqrt(Phi_l_tot)
 
 # ----------------------------------------------------------------------------------------------------
-def Phi_0_tot(Z):
+def Phi_0_tot(Dshell, Z):
 
-    spec = np.loadtxt(f"{RESULTS_DIR}/spec_{PARTICLES[iZ(Z)]}_EGMF.dat")
-    return spec[:,0], np.sum(spec[:, 27:], axis = 1)
-
+    spec = np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/spec_{PARTICLES[iZ(Z)]}_EGMF.dat")
+    return spec[:,0], np.sum(spec[:, 1:], axis = 1)
+    
 # ----------------------------------------------------------------------------------------------------
-def write_sph_harmonics_coeffs(l, Z):
+def write_sph_coeffs_srcs(l, Dshell, Z):
 
     if l == 0:
-        E, coeffs = Phi_0_tot(Z)
-        np.savetxt(f"{RESULTS_DIR}/Phi_{l}_tot_{PARTICLES[iZ(Z)]}.dat", np.column_stack((E, coeffs)), fmt = "%.15e")
+        E, coeffs = Phi_0_tot(Dshell, Z)
+        np.savetxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/Phi_{l}_tot_{PARTICLES[iZ(Z)]}.dat", np.column_stack((E, coeffs)), fmt = "%.15e")
 
     else:
-        E, coeffs = Phi_l_tot(l, Z)
-        np.savetxt(f"{RESULTS_DIR}/Phi_{l}_tot_{PARTICLES[iZ(Z)]}.dat", np.column_stack((E, coeffs)), fmt = "%.15e")
+        E, coeffs = Phi_l_tot(l, Dshell, Z)
+        np.savetxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/Phi_{l}_tot_{PARTICLES[iZ(Z)]}.dat", np.column_stack((E, coeffs)), fmt = "%.15e")
 
 # ----------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
-    # for Z in ZS:
-    #     write_sph_harmonics_coeffs(0, Z)
-    #     write_sph_harmonics_coeffs(1, Z)
-
-    write_sph_harmonics_coeffs(0, 1)
-    write_sph_harmonics_coeffs(1, 1)
+    for Z in ZS:
+        for Dshell in range(1, 10):
+            write_sph_coeffs_srcs(0, Dshell, Z)
+            write_sph_coeffs_srcs(1, Dshell, Z)
 
 # ----------------------------------------------------------------------------------------------------
