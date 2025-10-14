@@ -9,10 +9,10 @@ PARTICLES = ['1H', '4He', '14N', '28Si', '56Fe']
 PARTICLES_LEGEND = [r'$^1\mathrm{H}$', r'$^4\mathrm{He}$', r'$^{14}\mathrm{N}$', r'$^{28}\mathrm{Si}$', r'$^{56}\mathrm{Fe}$']
 ZS = [1, 2, 7, 14, 26]
 
-plt.rcParams.update({'legend.fontsize': 'large',
-'legend.title_fontsize': 'large',
-'axes.labelsize': 'x-large',
-'axes.titlesize': 'x-large',
+plt.rcParams.update({'legend.fontsize': 'x-large',
+'legend.title_fontsize': 'x-large',
+'axes.labelsize': 'xx-large',
+'axes.titlesize': 'xx-large',
 'xtick.labelsize': 'x-large',
 'ytick.labelsize': 'x-large'})
 

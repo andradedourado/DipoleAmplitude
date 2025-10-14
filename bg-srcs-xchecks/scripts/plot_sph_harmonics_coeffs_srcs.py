@@ -3,9 +3,9 @@ from matplotlib import pyplot as plt
 from matplotlib.pylab import cm
 import numpy as np
 
-plt.rcParams.update({'legend.fontsize': 'large',
-'legend.title_fontsize': 'large',
-'axes.labelsize': 'x-large',
+plt.rcParams.update({'legend.fontsize': 'x-large',
+'legend.title_fontsize': 'x-large',
+'axes.labelsize': 'xx-large',
 'axes.titlesize': 'xx-large',
 'xtick.labelsize': 'x-large',
 'ytick.labelsize': 'x-large'})
@@ -66,8 +66,8 @@ def plot_sph_harmonics_coeffs_Fig7():
         plt.plot(Lang2021_data[:,0], Lang2021_data[:,1], c = get_color(2, Z), ls = '--', label  = '__nolegend__')
 
     LAD_lgnd = lines.Line2D([], [], c = 'k', ls = '-', label = r'LAD')
-    Lang2021_lgnd = lines.Line2D([], [], c = 'k', ls = '--', label = r'Lang et al. (2021)')
-    plt.gca().add_artist(plt.legend(handles = [LAD_lgnd, Lang2021_lgnd], frameon = True, loc = 'upper left', bbox_to_anchor = (0.208, 1.)))
+    Lang2021_lgnd = lines.Line2D([], [], c = 'k', ls = '--', label = r'Lang+21')
+    plt.gca().add_artist(plt.legend(handles = [LAD_lgnd, Lang2021_lgnd], frameon = True, loc = 'upper left', bbox_to_anchor = (0.249, 1.)))
 
     plt.yscale("log")
     plt.xlabel(r"$\log_{10}{(\rm Energy / eV)}$")
@@ -89,8 +89,8 @@ def plot_sph_harmonics_coeffs_Fig8():
         plt.plot(Lang2021_data[:,0], Lang2021_data[:,1], c = get_color(2*iB, 7), ls = '--', label  = '__nolegend__')
 
     LAD_lgnd = lines.Line2D([], [], c = 'k', ls = '-', label = r'LAD')
-    Lang2021_lgnd = lines.Line2D([], [], c = 'k', ls = '--', label = r'Lang et al. (2021)')
-    plt.gca().add_artist(plt.legend(handles = [LAD_lgnd, Lang2021_lgnd], frameon = True, loc = 'upper left', bbox_to_anchor = (0.28, 1.)))
+    Lang2021_lgnd = lines.Line2D([], [], c = 'k', ls = '--', label = r'Lang+21')
+    plt.gca().add_artist(plt.legend(handles = [LAD_lgnd, Lang2021_lgnd], frameon = True, loc = 'upper left', bbox_to_anchor = (0.3355, 1.)))
 
     plt.yscale("log")
     plt.xlabel(r"$\log_{10}{(\rm Energy / eV)}$")
@@ -112,8 +112,8 @@ def plot_sph_harmonics_coeffs_Fig9(Z):
         plt.plot(Lang2021_data[:,0], Lang2021_data[:,1], c = get_color(iDmin, Z), ls = '--', label  = '__nolegend__')
 
     LAD_lgnd = lines.Line2D([], [], c = 'k', ls = '-', label = r'LAD')
-    Lang2021_lgnd = lines.Line2D([], [], c = 'k', ls = '--', label = r'Lang et al. (2021)')
-    plt.gca().add_artist(plt.legend(handles = [LAD_lgnd, Lang2021_lgnd], frameon = True, loc = 'upper left', bbox_to_anchor = (0.215, 1.)))
+    Lang2021_lgnd = lines.Line2D([], [], c = 'k', ls = '--', label = r'Lang+21')
+    plt.gca().add_artist(plt.legend(handles = [LAD_lgnd, Lang2021_lgnd], frameon = True, loc = 'lower right'))
 
     plt.yscale("log")
     plt.xlabel(r"$\log_{10}{(\rm Energy / eV)}$")
@@ -128,9 +128,9 @@ if __name__ == '__main__':
 
     # plot_sph_harmonics_coeffs_Fig7()
 
-    plot_sph_harmonics_coeffs_Fig8()
+    # plot_sph_harmonics_coeffs_Fig8()
     
-    # for Z in ZS:
-    #     plot_sph_harmonics_coeffs_Fig9(Z)
+    for Z in ZS:
+        plot_sph_harmonics_coeffs_Fig9(Z)
 
 # ----------------------------------------------------------------------------------------------------

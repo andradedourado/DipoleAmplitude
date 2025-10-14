@@ -4,9 +4,9 @@ from matplotlib.pylab import cm
 import matplotlib.pyplot as plt 
 import numpy as np
 
-plt.rcParams.update({'legend.fontsize': 'large',
-'legend.title_fontsize': 'large',
-'axes.labelsize': 'x-large',
+plt.rcParams.update({'legend.fontsize': 'x-large',
+'legend.title_fontsize': 'x-large',
+'axes.labelsize': 'xx-large',
 'axes.titlesize': 'xx-large',
 'xtick.labelsize': 'x-large',
 'ytick.labelsize': 'x-large'})
@@ -30,7 +30,7 @@ def plot_angular_distribution(): # Figure 2
 
     LAD = lines.Line2D([], [], c = 'k', ls = '-', label = 'LAD')
     Lang2021 = lines.Line2D([], [], c = 'k', ls = '--', label = 'Lang+21')
-    plt.gca().add_artist(plt.legend(title = 'Results', handles = [LAD, Lang2021], frameon = True, loc = 'upper left', bbox_to_anchor = (0.425, 1.)))
+    plt.gca().add_artist(plt.legend(title = 'Results', handles = [LAD, Lang2021], frameon = True, loc = 'upper left', bbox_to_anchor = (0.511, 1.)))
 
     plt.xlabel(r'$\cos{\theta}$')
     plt.ylabel(r'$dN/d\cos{\theta}$')
@@ -69,6 +69,6 @@ def plot_angular_distribution_xchecks(lbd_scatt_over_rs):
 if __name__ == '__main__':
 
     plot_angular_distribution()
-    # plot_angular_distribution_xchecks(0.3) # [0.01, 0.03, 0.1, 0.3, 1, 3]
+    plot_angular_distribution_xchecks(0.3) # [0.01, 0.03, 0.1, 0.3, 1, 3]
 
 # ----------------------------------------------------------------------------------------------------

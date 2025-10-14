@@ -5,9 +5,9 @@ from scipy.special import k1
 import matplotlib.pyplot as plt
 import numpy as np
 
-plt.rcParams.update({'legend.fontsize': 'large',
-'legend.title_fontsize': 'large',
-'axes.labelsize': 'x-large',
+plt.rcParams.update({'legend.fontsize': 'x-large',
+'legend.title_fontsize': 'x-large',
+'axes.labelsize': 'xx-large',
 'axes.titlesize': 'xx-large',
 'xtick.labelsize': 'x-large',
 'ytick.labelsize': 'x-large'})
@@ -70,7 +70,7 @@ def plot_dist_distr(lbd_scatt = 10):
 
     plt.xscale('log')
     plt.yscale('log')
-    plt.ylim([1e-2, 1e1])
+    plt.ylim([1e-2, 1e2])
     plt.xlabel(r'$r \: [\rm Mpc]$')
     plt.ylabel(r'$(r/c)[d^2N/(drdt)] \: [\rm Mpc^{-1}]$')
     plt.title(r'$\lambda_{\rm scatt} = 10 \: {\rm Mpc} \: | \: ct_{max} = 10^4 \: {\rm Mpc}$')
