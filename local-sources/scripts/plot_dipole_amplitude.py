@@ -18,10 +18,10 @@ RESULTS_DIR = "../results"
 # ----------------------------------------------------------------------------------------------------
 def get_galaxy_color(galaxy_type):
 
-    if galaxy_type == 'AGN': 
+    if galaxy_type == 'RG': 
         return cm.cool(np.linspace(0, 1, 10)[8])
 
-    elif galaxy_type == 'AGN+SBG':
+    elif galaxy_type == 'RG+SBG':
         return cm.cool(np.linspace(0, 1, 10)[5])
 
     elif galaxy_type == 'SBG':
@@ -56,7 +56,7 @@ def plot_Auger_dipole_amplitude():
 # ----------------------------------------------------------------------------------------------------
 def plot_dipole_amplitude(L):
 
-    for galaxy_type in ['AGN', 'AGN+SBG', 'SBG']:
+    for galaxy_type in ['RG', 'RG+SBG', 'SBG']:
         data = np.loadtxt(f"{RESULTS_DIR}/dipole_amplitude_full_sky_{galaxy_type}_{L}.dat")
         plt.plot(np.log10(data[:,0]), data[:,1], c = get_galaxy_color(galaxy_type))
 
@@ -72,7 +72,7 @@ def plot_dipole_amplitude(L):
     plt.ylim([3.e-4, 3])
     plt.xlabel(r'$\log_{10}(\rm Energy/ eV)$')
     plt.ylabel('Dipole amplitude')
-    plt.legend(['AGN', 'AGN + SBG', 'SBG'], loc = 'lower right')
+    plt.legend(['RG', 'RG + SBG', 'SBG'], loc = 'lower right')
     plt.savefig(f"{FIGURES_DIR}/dipole_amplitude_full_sky_{L}.pdf", bbox_inches = 'tight')
     plt.savefig(f"{FIGURES_DIR}/dipole_amplitude_full_sky_{L}.png", bbox_inches = 'tight', dpi = 300)
     plt.show()
