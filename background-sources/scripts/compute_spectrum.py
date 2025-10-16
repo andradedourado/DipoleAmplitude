@@ -12,13 +12,10 @@ ES = np.logspace(4./(2.*(len(ESS) - 1)), 4. - 4./(2.*(len(ESS) - 1)), num = len(
 PARTICLES = ['1H', '4He', '14N', '28Si', '56Fe']
 ZSS = [1, 2, 7, 14, 26]
 
-eV_to_erg = 1.60218e-12
 EeV_to_eV = 1e18
+eV_to_erg = 1.60218e-12
 
 Emin = 10**17.8 # eV
-L0 = 5e44 # erg Mpc^-3 yr^-1
-Gmm = -1.47
-Rcut = 10**18.19 # V
 
 E0 = EeV_to_eV
 
@@ -102,10 +99,12 @@ def w_mag(Es, cts, Zs, Dmin, Dmax, has_magnetic_field):
 # ----------------------------------------------------------------------------------------------------
 def w_sim(Es, cts):
 
-    return (Es * EeV_to_eV) * cts
+    return (Es * EeV_to_eV) / E0 * cts
 
 # ----------------------------------------------------------------------------------------------------
 def w_spec(Es, Zs):
+
+    L0, Gmm, Rcut = generation_rate_parameters(Zs)
 
     Es = Es * EeV_to_eV
 
@@ -114,7 +113,35 @@ def w_spec(Es, Zs):
     else:
         w_spec = (Es / E0)**-Gmm * np.exp(1 - Es / (Zs * Rcut))
 
-    return w_spec
+    if Zs == 1:
+        return w_spec * L0 / (quad(integrand_w_spec, Emin, 1e23, args = (Zs))[0] * eV_to_erg**2)
+    else:
+        return w_spec * [0.0, 0.245, 0.681, 0.049, 0.025][iZs(Zs)] * L0 / (quad(integrand_w_spec, Emin, 1e23, args = (Zs))[0] * eV_to_erg**2)
+
+# ----------------------------------------------------------------------------------------------------
+def integrand_w_spec(Es, Zs):
+
+    _, Gmm, Rcut = generation_rate_parameters(Zs)
+
+    if Es <= Zs * Rcut: 
+        return Es * (Es / E0)**-Gmm
+    elif Es > Zs * Rcut: 
+        return Es * (Es / E0)**-Gmm * np.exp(1 - Es / (Zs * Rcut))
+
+# ----------------------------------------------------------------------------------------------------
+def generation_rate_parameters(Zs): # arXiv:2211.02857
+
+    if Zs == 1:
+        L0 = 6.54e44 # erg Mpc^-3 yr^-1
+        Gmm = 3.34
+        Rcut = 10**19.3 # V
+        return L0, Gmm, Rcut
+
+    else:
+        L0 = 5e44 # erg Mpc^-3 yr^-1
+        Gmm = -1.47
+        Rcut = 10**18.19 # V
+        return L0, Gmm, Rcut
 
 # ----------------------------------------------------------------------------------------------------
 def compute_spectrum(Zs, Dmin, Dmax, has_magnetic_field):
@@ -155,7 +182,7 @@ def write_spectrum(Zs, Dshell, has_magnetic_field):
 # ----------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
-    for Zs in ZSS:
-        write_spectrum(Zs, 1, True)
+    for Dshell in range(1, 10):
+        write_spectrum(26, Dshell, True) # Manually change the primary to run the script
 
 # ----------------------------------------------------------------------------------------------------

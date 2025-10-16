@@ -46,10 +46,10 @@ def get_color(Zs):
 # ----------------------------------------------------------------------------------------------------
 def plot_spectrum(Dshell):
 
-    spec = np.zeros(len(np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/norm_spec_4He_EGMF.dat")))
+    spec = np.zeros(len(np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/spec_4He_EGMF.dat")))
 
-    for Zs in ZSS[1:]:
-        data = np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/norm_spec_{PARTICLES[iZs(Zs)]}_EGMF.dat")    
+    for Zs in ZSS:
+        data = np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/spec_{PARTICLES[iZs(Zs)]}_EGMF.dat")    
         y_smooth = savgol_filter(data[:,0]**3 * np.sum(data[:, 1:], axis = 1), window_length = 11, polyorder = 3)
         plt.plot(np.log10(data[:, 0]), y_smooth, c = get_color(Zs), label = PARTICLES_LEGEND[iZs(Zs)])
         # plt.plot(np.log10(data[:, 0]), data[:,0]**3 * np.sum(data[:, 1:], axis = 1), c = get_color(Zs), label = PARTICLES_LEGEND[iZs(Zs)])
@@ -59,7 +59,7 @@ def plot_spectrum(Dshell):
 
     plt.yscale('log')
     plt.xlim([18, 20.5])
-    plt.ylim([5e88, 5e90])
+    plt.ylim([2e73, 2e76])
     plt.xlabel(r'$\log_{10}(\rm Energy / eV)$')
     plt.ylabel(r'$E^3 \times {\rm Intensity} \: \rm [arb. units]$')
     plt.legend(title = r'$Z_s$')

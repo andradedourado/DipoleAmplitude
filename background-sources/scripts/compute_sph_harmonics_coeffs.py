@@ -23,7 +23,7 @@ def iZ(Z):
 # ----------------------------------------------------------------------------------------------------
 def scattering_length(E, Z):
 
-    RL = 1.081 / Z * E / B # Mpc; E in EeV and B in nG 
+    RL = 3.5 * 1.081 / Z * E / B # Mpc; E in EeV and B in nG 
 
     if RL < lbd_coh:
         return (RL/lbd_coh)**(1/3) * lbd_coh # Mpc
