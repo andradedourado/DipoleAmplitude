@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+from matplotlib.offsetbox import AnchoredText
 from matplotlib.pylab import cm
 import numpy as np
 
@@ -42,6 +43,11 @@ def get_color(i, Z):
     
     elif Z == 26:
         return cm.BuPu(np.linspace(0, 1, 10)[9 - i])
+    
+# ----------------------------------------------------------------------------------------------------
+def number_density(Dshell):
+
+    return 1e4 / (4 * np.pi * Dshell**3) # 1e-4 Mpc^-3
 
 # ----------------------------------------------------------------------------------------------------
 def plot_sph_harmonics_coeffs(Dshell):
@@ -56,12 +62,13 @@ def plot_sph_harmonics_coeffs(Dshell):
 
         plt.plot(np.log10(Phi_0_tot[:,0][mask]), dlt[mask], c = get_color(2, Z), label = PARTICLES_LEGEND[iZ(Z)])
 
+    plt.gca().add_artist(AnchoredText(r'$n = {:.2f} \times 10^{{-4}} \: \rm Mpc^{{-3}}$'.format(number_density(Dshell)), loc = 'upper left', frameon = False, prop = {'fontsize': 'x-large'}))
     plt.yscale("log")
     plt.xlim([18, 20])
     plt.ylim([1e-5, 3])
     plt.xlabel(r"$\log_{10}{(\rm Energy / eV)}$")
     plt.ylabel(r"Dipole amplitude")
-    plt.legend(title = 'Nucleus')
+    plt.legend(title = 'Nucleus', loc = 'lower right')
     plt.savefig(f"{FIGURES_DIR}/sph_harmonics_coeffs_{int(Dshell)}Mpc.pdf", bbox_inches = 'tight')
     plt.savefig(f"{FIGURES_DIR}/sph_harmonics_coeffs_{int(Dshell)}Mpc.png", bbox_inches = 'tight', dpi = 300)
     plt.show()

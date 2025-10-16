@@ -1,5 +1,6 @@
-from scipy.signal import savgol_filter
+from matplotlib.offsetbox import AnchoredText
 from matplotlib.pylab import cm
+from scipy.signal import savgol_filter
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -44,27 +45,36 @@ def get_color(Zs):
         return cm.BuPu(np.linspace(0, 1, 10)[7])
 
 # ----------------------------------------------------------------------------------------------------
+def number_density(Dshell):
+
+    return 1e4 / (4 * np.pi * Dshell**3) # 1e-4 Mpc^-3
+
+# ----------------------------------------------------------------------------------------------------
 def plot_spectrum(Dshell):
 
-    spec = np.zeros(len(np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/spec_4He_EGMF.dat")))
+    spec = np.zeros(len(np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/spec_1H_EGMF.dat")))
 
     for Zs in ZSS:
-        data = np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/spec_{PARTICLES[iZs(Zs)]}_EGMF.dat")    
-        y_smooth = savgol_filter(data[:,0]**3 * np.sum(data[:, 1:], axis = 1), window_length = 11, polyorder = 3)
-        plt.plot(np.log10(data[:, 0]), y_smooth, c = get_color(Zs), label = PARTICLES_LEGEND[iZs(Zs)])
-        # plt.plot(np.log10(data[:, 0]), data[:,0]**3 * np.sum(data[:, 1:], axis = 1), c = get_color(Zs), label = PARTICLES_LEGEND[iZs(Zs)])
-        spec += y_smooth
+        data = np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/spec_{PARTICLES[iZs(Zs)]}_EGMF.dat")
+        data = np.nan_to_num(data, nan = 0.0) # Check this later
+
+        plt.plot(np.log10(data[:, 0]), data[:,0]**3 * np.sum(data[:, 1:], axis = 1), c = get_color(Zs), label = PARTICLES_LEGEND[iZs(Zs)])
+        spec += data[:,0]**3 * np.sum(data[:, 1:], axis = 1)
+
+        # y_smooth = savgol_filter(data[:,0]**3 * np.sum(data[:, 1:], axis = 1), window_length = 11, polyorder = 3)
+        # plt.plot(np.log10(data[:, 0]), y_smooth, c = get_color(Zs), label = PARTICLES_LEGEND[iZs(Zs)])
+        # spec += y_smooth
 
     plt.plot(np.log10(data[:, 0]), spec, c = 'k', label = 'All')
-
+    plt.gca().add_artist(AnchoredText(r'$n = {:.2f} \times 10^{{-4}} \: \rm Mpc^{{-3}}$'.format(number_density(Dshell)), loc = 'upper left', frameon = False, prop = {'fontsize': 'x-large'}))
     plt.yscale('log')
     plt.xlim([18, 20.5])
     plt.ylim([2e73, 2e76])
     plt.xlabel(r'$\log_{10}(\rm Energy / eV)$')
     plt.ylabel(r'$E^3 \times {\rm Intensity} \: \rm [arb. units]$')
     plt.legend(title = r'$Z_s$')
-    # plt.savefig(f"{FIGURES_DIR}/spectrum_{int(Dshell)}Mpc.pdf", bbox_inches = 'tight')
-    # plt.savefig(f"{FIGURES_DIR}/spectrum_{int(Dshell)}Mpc.png", bbox_inches = 'tight', dpi = 300)
+    plt.savefig(f"{FIGURES_DIR}/spectrum_{int(Dshell)}Mpc.pdf", bbox_inches = 'tight')
+    plt.savefig(f"{FIGURES_DIR}/spectrum_{int(Dshell)}Mpc.png", bbox_inches = 'tight', dpi = 300)
     plt.show()
 
 # ----------------------------------------------------------------------------------------------------

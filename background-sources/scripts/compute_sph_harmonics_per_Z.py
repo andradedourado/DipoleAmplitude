@@ -50,6 +50,7 @@ def compute_sph_harmonics_coeffs(l, iE, rs, Z):
 def Phi_l_tot(l, Dshell, Z):
 
     spec = np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/spec_{PARTICLES[iZ(Z)]}_EGMF.dat")
+    spec = np.nan_to_num(spec, nan = 0.0) # Check this later
 
     Phi_l_tot = np.zeros_like(ES)
 
@@ -73,6 +74,7 @@ def Phi_l_tot(l, Dshell, Z):
 def Phi_0_tot(Dshell, Z):
 
     spec = np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/spec_{PARTICLES[iZ(Z)]}_EGMF.dat")
+    spec = np.nan_to_num(spec, nan = 0.0) # Check this later
     return spec[:,0], np.sum(spec[:, 1:], axis = 1)
     
 # ----------------------------------------------------------------------------------------------------
