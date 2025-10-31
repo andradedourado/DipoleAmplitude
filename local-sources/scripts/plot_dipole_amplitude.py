@@ -54,10 +54,10 @@ def plot_Auger_dipole_amplitude():
     plt.errorbar(x, y, xerr = np.vstack([x - xlow, xhigh - x]), yerr = yerr, uplims = 1, c = 'k', ls = 'None', marker = 'None')
 
 # ----------------------------------------------------------------------------------------------------
-def plot_dipole_amplitude(L):
+def plot_dipole_amplitude(L, model):
 
     for galaxy_type in ['RG', 'RG+SBG', 'SBG']:
-        data = np.loadtxt(f"{RESULTS_DIR}/dipole_amplitude_full_sky_{galaxy_type}_{L}.dat")
+        data = np.loadtxt(f"{RESULTS_DIR}/dipole_amplitude_full_sky_{model}_{galaxy_type}_{L}.dat")
         plt.plot(np.log10(data[:,0]), data[:,1], c = get_galaxy_color(galaxy_type))
 
     plot_Auger_dipole_amplitude()
@@ -73,14 +73,15 @@ def plot_dipole_amplitude(L):
     plt.xlabel(r'$\log_{10}(\rm Energy/ eV)$')
     plt.ylabel('Dipole amplitude')
     plt.legend(['RG', 'RG + SBG', 'SBG'], loc = 'lower right')
-    plt.savefig(f"{FIGURES_DIR}/dipole_amplitude_full_sky_{L}.pdf", bbox_inches = 'tight')
-    plt.savefig(f"{FIGURES_DIR}/dipole_amplitude_full_sky_{L}.png", bbox_inches = 'tight', dpi = 300)
+    plt.savefig(f"{FIGURES_DIR}/dipole_amplitude_full_sky_{model}_{L}.pdf", bbox_inches = 'tight')
+    plt.savefig(f"{FIGURES_DIR}/dipole_amplitude_full_sky_{model}_{L}.png", bbox_inches = 'tight', dpi = 300)
     plt.show()
 
 # ----------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
-    for L in ['L11', 'Lradio', 'Lgamma']:
-        plot_dipole_amplitude(L)
+    for model in ['CF2017', 'CF2023']:
+        for L in ['L11', 'Lradio', 'Lgamma']:
+            plot_dipole_amplitude(L, model)
 
 # ----------------------------------------------------------------------------------------------------

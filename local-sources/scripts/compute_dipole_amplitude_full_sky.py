@@ -1,4 +1,4 @@
-from scipy.integrate import quad
+from get_spectrum_weight import w_spec
 import numpy as np
 
 GALAXIES_DIR = "../../galaxies"
@@ -47,51 +47,6 @@ def w_sim(Es):
     return Es * EeV_to_eV / E0
 
 # ----------------------------------------------------------------------------------------------------
-def w_spec(Es, Zs):
-
-    L0, Gmm, Rcut = generation_rate_parameters(Zs)
-
-    Es = Es * EeV_to_eV
-
-    mask_low = Es <= Zs * Rcut
-    mask_high = ~mask_low
-
-    w_spec = np.zeros_like(Es)
-
-    w_spec[mask_low] = (Es[mask_low] / E0)**-Gmm
-    w_spec[mask_high] = (Es[mask_high] / E0)**-Gmm * np.exp(1 - Es[mask_high] / (Zs * Rcut))
-
-    if Zs == 1:
-        return w_spec * L0 / (quad(integrand_w_spec, Emin, 1e23, args = (Zs))[0] * eV_to_erg**2)
-    else:
-        return w_spec * [0.0, 0.245, 0.681, 0.049, 0.025][iZs(Zs)] * L0 / (quad(integrand_w_spec, Emin, 1e23, args = (Zs))[0] * eV_to_erg**2)
-
-# ----------------------------------------------------------------------------------------------------
-def integrand_w_spec(Es, Zs):
-
-    _, Gmm, Rcut = generation_rate_parameters(Zs)
-
-    if Es <= Zs * Rcut: 
-        return Es * (Es / E0)**-Gmm
-    elif Es > Zs * Rcut: 
-        return Es * (Es / E0)**-Gmm * np.exp(1 - Es / (Zs * Rcut))
-
-# ----------------------------------------------------------------------------------------------------
-def generation_rate_parameters(Zs): # arXiv:2211.02857
-
-    if Zs == 1:
-        L0 = 6.54e44 # erg Mpc^-3 yr^-1
-        Gmm = 3.34
-        Rcut = 10**19.3 # V
-        return L0, Gmm, Rcut
-
-    else:
-        L0 = 5e44 # erg Mpc^-3 yr^-1
-        Gmm = -1.47
-        Rcut = 10**18.19 # V
-        return L0, Gmm, Rcut
-
-# ----------------------------------------------------------------------------------------------------
 def get_galaxy_set(galaxy_type):
 
     if galaxy_type == 'RG':
@@ -107,7 +62,7 @@ def get_galaxy_set(galaxy_type):
             'NGC4631', 'NGC891', 'NGC3556', 'NGC660', 'NGC2146', 'NGC3079', 'NGC1068', 'NGC1365']
 
 # ----------------------------------------------------------------------------------------------------
-def compute_S0_Sx_Sy_Sz(galaxy_type, L):
+def compute_S0_Sx_Sy_Sz(galaxy_type, L, model):
 
     S0, Sx, Sy, Sz = (np.zeros_like(ENERGY_BIN_CENTERS) for _ in range(4))
 
@@ -115,7 +70,7 @@ def compute_S0_Sx_Sy_Sz(galaxy_type, L):
         for galaxy in get_galaxy_set(galaxy_type):
             for EGMF in range(20):
                 data = np.loadtxt(f"{SIMULATIONS_DIR}/{PARTICLES[iZs(Zs)]}/events_{galaxy}_EGMF{EGMF:02d}.txt")
-                weights = w_L(galaxy, L) * w_sim(data[:,10]) * w_spec(data[:,10], Zs)
+                weights = w_L(galaxy, L) * w_sim(data[:,10]) * w_spec(data[:,10], Zs, model)
                 
                 S0 += np.histogram(data[:,2], bins = ENERGY_EDGES, weights = weights)[0]
                 Sx += np.histogram(data[:,2], bins = ENERGY_EDGES, weights = data[:,6] * weights)[0]
@@ -125,16 +80,17 @@ def compute_S0_Sx_Sy_Sz(galaxy_type, L):
     return S0, Sx, Sy, Sz
 
 # ----------------------------------------------------------------------------------------------------
-def compute_dipole_amplitude(galaxy_type, L):
+def compute_dipole_amplitude(galaxy_type, L, model):
 
-    S0, Sx, Sy, Sz = compute_S0_Sx_Sy_Sz(galaxy_type, L)
-    np.savetxt(f"{RESULTS_DIR}/dipole_amplitude_full_sky_{galaxy_type}_{L}.dat", np.column_stack((ENERGY_BIN_CENTERS * 1e18, 3 * np.sqrt(Sx**2 + Sy**2 + Sz**2) / S0)), fmt = "%.15e")
+    S0, Sx, Sy, Sz = compute_S0_Sx_Sy_Sz(galaxy_type, L, model)
+    np.savetxt(f"{RESULTS_DIR}/dipole_amplitude_full_sky_{model}_{galaxy_type}_{L}.dat", np.column_stack((ENERGY_BIN_CENTERS * 1e18, 3 * np.sqrt(Sx**2 + Sy**2 + Sz**2) / S0)), fmt = "%.15e")
 
 # ----------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
-    for galaxy_type in ['RG', 'RG+SBG', 'SBG']:
-        for L in ['L11', 'Lradio', 'Lgamma']:
-            compute_dipole_amplitude(galaxy_type, L)
+    for model in ['CF2017', 'CF2023']:
+        for galaxy_type in ['RG', 'RG+SBG', 'SBG']:
+            for L in ['L11', 'Lradio', 'Lgamma']:
+                compute_dipole_amplitude(galaxy_type, L, model)
 
 # ----------------------------------------------------------------------------------------------------

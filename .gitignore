@@ -1,4 +1,5 @@
 **/.DS_Store
 bg-srcs-xchecks/scripts/base_dir.txt
+local-sources/scripts/__pycache__
 local-srcs-xchecks/scripts/simulations_dir.txt
 simulations
