@@ -73,9 +73,9 @@ def compute_S0_Sx_Sy_Sz(galaxy_type, L, model):
                 weights = w_L(galaxy, L) * w_sim(data[:,10]) * w_spec(data[:,10], Zs, model)
                 
                 S0 += np.histogram(data[:,2], bins = ENERGY_EDGES, weights = weights)[0]
-                Sx += np.histogram(data[:,2], bins = ENERGY_EDGES, weights = data[:,6] * weights)[0]
-                Sy += np.histogram(data[:,2], bins = ENERGY_EDGES, weights = data[:,7] * weights)[0]
-                Sz += np.histogram(data[:,2], bins = ENERGY_EDGES, weights = data[:,8] * weights)[0]
+                Sx += np.histogram(data[:,2], bins = ENERGY_EDGES, weights = -data[:,6] * weights)[0]
+                Sy += np.histogram(data[:,2], bins = ENERGY_EDGES, weights = -data[:,7] * weights)[0]
+                Sz += np.histogram(data[:,2], bins = ENERGY_EDGES, weights = -data[:,8] * weights)[0]
 
     return S0, Sx, Sy, Sz
 

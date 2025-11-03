@@ -45,17 +45,26 @@ def get_color(Zs):
         return cm.BuPu(np.linspace(0, 1, 10)[7])
 
 # ----------------------------------------------------------------------------------------------------
+def get_ylim(model):
+
+    if model == 'CF2017':
+        plt.ylim([5e41, 5e45])
+    
+    elif model == 'CF2023':
+        plt.ylim([5e27, 5e31])
+
+# ----------------------------------------------------------------------------------------------------
 def number_density(Dshell):
 
     return 1e4 / (4 * np.pi * Dshell**3) # 1e-4 Mpc^-3
 
 # ----------------------------------------------------------------------------------------------------
-def plot_spectrum(Dshell):
+def plot_spectrum(Dshell, model):
 
-    spec = np.zeros(len(np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/spec_1H_EGMF.dat")))
+    spec = np.zeros(len(np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/spec_1H_{model}_EGMF.dat")))
 
     for Zs in ZSS:
-        data = np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/spec_{PARTICLES[iZs(Zs)]}_EGMF.dat")
+        data = np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/spec_{PARTICLES[iZs(Zs)]}_{model}_EGMF.dat")
         data = np.nan_to_num(data, nan = 0.0) # Check this later
 
         plt.plot(np.log10(data[:, 0]), data[:,0]**3 * np.sum(data[:, 1:], axis = 1), c = get_color(Zs), label = PARTICLES_LEGEND[iZs(Zs)])
@@ -69,18 +78,18 @@ def plot_spectrum(Dshell):
     plt.gca().add_artist(AnchoredText(r'$n = {:.2f} \times 10^{{-4}} \: \rm Mpc^{{-3}}$'.format(number_density(Dshell)), loc = 'upper left', frameon = False, prop = {'fontsize': 'x-large'}))
     plt.yscale('log')
     plt.xlim([18, 20.5])
-    plt.ylim([2e73, 2e76])
+    get_ylim(model)
     plt.xlabel(r'$\log_{10}(\rm Energy / eV)$')
     plt.ylabel(r'$E^3 \times {\rm Intensity} \: \rm [arb. units]$')
     plt.legend(title = r'$Z_s$')
-    plt.savefig(f"{FIGURES_DIR}/spectrum_{int(Dshell)}Mpc.pdf", bbox_inches = 'tight')
-    plt.savefig(f"{FIGURES_DIR}/spectrum_{int(Dshell)}Mpc.png", bbox_inches = 'tight', dpi = 300)
+    plt.savefig(f"{FIGURES_DIR}/spectrum_{int(Dshell)}Mpc_{model}.pdf", bbox_inches = 'tight')
+    plt.savefig(f"{FIGURES_DIR}/spectrum_{int(Dshell)}Mpc_{model}.png", bbox_inches = 'tight', dpi = 300)
     plt.show()
 
 # ----------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
     for Dshell in range(1, 10):
-        plot_spectrum(Dshell)
+        plot_spectrum(Dshell, 'CF2017')
 
 # ----------------------------------------------------------------------------------------------------

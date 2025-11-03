@@ -47,12 +47,12 @@ def compute_sph_harmonics_coeffs(l, iE, rs, Zs):
     return (2*l + 1) / 2 / N * (simps(integrand, x) + d2N_dAdt_bal(ES[iE], rs, Zs) * legendre(l)(1))
 
 # ----------------------------------------------------------------------------------------------------
-def Phi_l_tot(l, Dshell):
+def Phi_l_tot(l, Dshell, model):
 
     Phi_l_tot = np.zeros_like(ES)
     
     for Zs in ZSS:
-        data = np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/spec_{PARTICLES[iZs(Zs)]}_EGMF.dat")
+        data = np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/spec_{PARTICLES[iZs(Zs)]}_{model}_EGMF.dat")
 
         for irs, rs in enumerate(np.arange(27, 860, Dshell)):
             
@@ -71,32 +71,32 @@ def Phi_l_tot(l, Dshell):
     return data[:,0], np.sqrt(Phi_l_tot)
 
 # ----------------------------------------------------------------------------------------------------
-def Phi_0_tot(Dshell):
+def Phi_0_tot(Dshell, model):
 
     Phi_0_tot = np.zeros_like(ES)
 
     for Zs in ZSS:
-        data = np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/spec_{PARTICLES[iZs(Zs)]}_EGMF.dat")
+        data = np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/spec_{PARTICLES[iZs(Zs)]}_{model}_EGMF.dat")
         Phi_0_tot += np.sum(data[:, 1:], axis = 1)
 
     return data[:,0], Phi_0_tot
     
 # ----------------------------------------------------------------------------------------------------
-def write_sph_coeffs_srcs(l, Dshell):
+def write_sph_coeffs_srcs(l, Dshell, model):
 
     if l == 0:
-        E, coeffs = Phi_0_tot(Dshell)
-        np.savetxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/Phi_{l}_tot.dat", np.column_stack((E, coeffs)), fmt = "%.15e")
+        E, coeffs = Phi_0_tot(Dshell, model)
+        np.savetxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/Phi_{l}_tot_{model}.dat", np.column_stack((E, coeffs)), fmt = "%.15e")
 
     else:
-        E, coeffs = Phi_l_tot(l, Dshell)
-        np.savetxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/Phi_{l}_tot.dat", np.column_stack((E, coeffs)), fmt = "%.15e")
+        E, coeffs = Phi_l_tot(l, Dshell, model)
+        np.savetxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/Phi_{l}_tot_{model}.dat", np.column_stack((E, coeffs)), fmt = "%.15e")
 
 # ----------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
     for Dshell in range(1, 10):
-        write_sph_coeffs_srcs(0, Dshell)
-        write_sph_coeffs_srcs(1, Dshell)
+        write_sph_coeffs_srcs(0, Dshell, 'CF2023')
+        write_sph_coeffs_srcs(1, Dshell, 'CF2023')
 
 # ----------------------------------------------------------------------------------------------------

@@ -59,12 +59,12 @@ def number_density(Dshell):
     return 1e4 / (4 * np.pi * Dshell**3) # 1e-4 Mpc^-3
 
 # ----------------------------------------------------------------------------------------------------
-def plot_sph_harmonics_per_Z(Dshell):
+def plot_sph_harmonics_per_Z(Dshell, model):
 
     for Z in ZS:
         
-        Phi_0_tot = np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/Phi_0_tot_{PARTICLES[iZ(Z)]}.dat")
-        Phi_1_tot = np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/Phi_1_tot_{PARTICLES[iZ(Z)]}.dat")
+        Phi_0_tot = np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/Phi_0_tot_{PARTICLES[iZ(Z)]}_{model}.dat")
+        Phi_1_tot = np.loadtxt(f"{RESULTS_DIR}/{int(Dshell)}Mpc/Phi_1_tot_{PARTICLES[iZ(Z)]}_{model}.dat")
 
         dlt = Phi_1_tot[:,1] / Phi_0_tot[:,1]
         mask = (dlt > 0) & np.isfinite(dlt) 
@@ -72,22 +72,23 @@ def plot_sph_harmonics_per_Z(Dshell):
         plt.plot(np.log10(Phi_0_tot[:,0][mask]), dlt[mask], c = get_color(2, Z), label = PARTICLES_LEGEND[iZ(Z)])
 
     plt.gca().add_artist(AnchoredText(r'$n = {:.2f} \times 10^{{-4}} \: \rm Mpc^{{-3}}$'.format(number_density(Dshell)), loc = 'upper left', frameon = False, prop = {'fontsize': 'x-large'}))
-    plt.yscale("log")
+    plt.gca().xaxis.set_major_formatter(FuncFormatter(format_ticks))
+    plt.yscale('log')
     plt.xlim([18, 20])
     plt.ylim([1e-5, 3])
     plt.xlabel(r"$\log_{10}{(\rm Energy / eV)}$")
     plt.ylabel(r"Dipole amplitude")
     plt.legend(title = 'Nucleus', loc = 'lower right')
-    plt.savefig(f"{FIGURES_DIR}/sph_harmonics_coeffs_{int(Dshell)}Mpc.pdf", bbox_inches = 'tight')
-    plt.savefig(f"{FIGURES_DIR}/sph_harmonics_coeffs_{int(Dshell)}Mpc.png", bbox_inches = 'tight', dpi = 300)
+    plt.savefig(f"{FIGURES_DIR}/sph_harmonics_coeffs_{model}_{int(Dshell)}Mpc.pdf", bbox_inches = 'tight')
+    plt.savefig(f"{FIGURES_DIR}/sph_harmonics_coeffs_{model}_{int(Dshell)}Mpc.png", bbox_inches = 'tight', dpi = 300)
     plt.show()
 
 # ----------------------------------------------------------------------------------------------------
-def plot_sph_harmonics_all_Z():
+def plot_sph_harmonics_all_Z(model):
     
     for Dshell in range(1, 10):
-        Phi_0_tot = np.loadtxt(f"{RESULTS_DIR}/{Dshell}Mpc/Phi_0_tot.dat")
-        Phi_1_tot = np.loadtxt(f"{RESULTS_DIR}/{Dshell}Mpc/Phi_1_tot.dat")
+        Phi_0_tot = np.loadtxt(f"{RESULTS_DIR}/{Dshell}Mpc/Phi_0_tot_{model}.dat")
+        Phi_1_tot = np.loadtxt(f"{RESULTS_DIR}/{Dshell}Mpc/Phi_1_tot_{model}.dat")
 
         dlt = Phi_1_tot[:,1] / Phi_0_tot[:,1]
         mask = (dlt > 0) & np.isfinite(dlt)
@@ -95,22 +96,22 @@ def plot_sph_harmonics_all_Z():
         plt.plot(np.log10(Phi_0_tot[:,0][mask]), dlt[mask], c = plt.get_cmap('viridis')(np.linspace(0, 1, 10)[Dshell]), label = f'{number_density(Dshell):.2f}') 
     
     plt.gca().xaxis.set_major_formatter(FuncFormatter(format_ticks))
-    plt.yscale("log")
+    plt.yscale('log')
     plt.xlim([18, 20])
     plt.ylim([3e-5, 3])
     plt.xlabel(r"$\log_{10}{(\rm Energy / eV)}$")
     plt.ylabel(r"Dipole amplitude")
     plt.legend(title = r'Number density$\: \rm [10^{-4} Mpc^{-3}]$', loc = 'lower center', ncol = 3)
-    plt.savefig(f"{FIGURES_DIR}/sph_harmonics_coeffs.pdf", bbox_inches = 'tight')
-    plt.savefig(f"{FIGURES_DIR}/sph_harmonics_coeffs.png", bbox_inches = 'tight', dpi = 300)
+    plt.savefig(f"{FIGURES_DIR}/sph_harmonics_coeffs_{model}.pdf", bbox_inches = 'tight')
+    plt.savefig(f"{FIGURES_DIR}/sph_harmonics_coeffs_{model}.png", bbox_inches = 'tight', dpi = 300)
     plt.show()
     
 # ----------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
    
-#    for Dshell in range(1, 10):
-#         plot_sph_harmonics_per_Z(Dshell)
+    for Dshell in range(1, 10):
+        plot_sph_harmonics_per_Z(Dshell, 'CF2023')
 
-    plot_sph_harmonics_all_Z()
+    plot_sph_harmonics_all_Z('CF2023')
 
 # ----------------------------------------------------------------------------------------------------
